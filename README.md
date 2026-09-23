@@ -54,7 +54,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### 3. Start the Backend & Web App
+### 3. Start the Unified Server
 ```bash
 # Option A: One-click batch launcher
 start_backend.bat
@@ -66,9 +66,18 @@ start_backend.bat
 uv run uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Once started:
-- **Web App**: Open [http://localhost:8000](http://localhost:8000)
-- **Interactive Swagger API Docs**: Open [http://localhost:8000/docs](http://localhost:8000/docs)
+---
+
+## 🌐 Unified Master Preview Gateway
+
+All components of GREEN-EYE are integrated into a single unified web server:
+
+| Subsystem | Master Route | Description |
+| :--- | :--- | :--- |
+| 🌿 **Full-Stack Studio** | [http://localhost:8000](http://localhost:8000) | Complete Diagnostic Studio, 2,521 Dataset Explorer, Disease Guide, Treatment Calculator & Multilingual Voice Guide. |
+| 🔐 **Login & Auth Portal** | [http://localhost:8000/login](http://localhost:8000/login) | Multilingual sign-in (Telugu, English, Hindi), Google OAuth & 1-Click Demo Login. |
+| ⚡ **FastAPI Swagger Docs** | [http://localhost:8000/docs](http://localhost:8000/docs) | Interactive Swagger UI API testing and telemetry. |
+| 📖 **ReDoc Specification** | [http://localhost:8000/redoc](http://localhost:8000/redoc) | Technical REST API specification. |
 
 ---
 
