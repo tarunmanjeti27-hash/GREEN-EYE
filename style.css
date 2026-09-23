@@ -2897,9 +2897,10 @@ a {
 }
 
 .starting-login-gate.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .starting-login-card {
