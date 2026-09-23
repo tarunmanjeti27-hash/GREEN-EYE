@@ -151,6 +151,7 @@ async def diagnose_leaf_json(payload: Base64DiagnoseRequest):
 
 
 @app.post("/api/dosage-calculator")
+@app.post("/api/calculate-dosage")
 async def calculate_field_dosage(req: DosageRequest):
     """
     Calculates precise agronomic chemical and bio-agent application recommendations
@@ -245,6 +246,50 @@ async def calculate_field_dosage(req: DosageRequest):
             "repeat_interval_days": 14,
             "action_warning": "Sterilize cane cutting implements in 10% sodium hypochlorite bleach."
         }
+
+
+@app.get("/api/model-accuracy")
+async def model_accuracy():
+    """Returns saved training accuracy metrics and per-class performance."""
+    import json
+    results_path = BASE_DIR / "models" / "training_results.json"
+    if not results_path.exists():
+        return JSONResponse(
+            status_code=404,
+            content={
+                "error": "No training results found. Run training first with: python -m backend.train_model",
+                "trained": False,
+            }
+        )
+    try:
+        with open(results_path, "r") as f:
+            results = json.load(f)
+        results["trained"] = True
+        return JSONResponse(content=results)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load training results: {str(e)}")
+
+
+@app.get("/api/ml-comparison")
+async def ml_comparison():
+    """Returns multi-algorithm comparison results (9 ML classifiers)."""
+    import json
+    results_path = BASE_DIR / "models" / "ml_comparison_results.json"
+    if not results_path.exists():
+        return JSONResponse(
+            status_code=404,
+            content={
+                "error": "No ML comparison results found. Run: python -m backend.train_ml_models",
+                "trained": False,
+            }
+        )
+    try:
+        with open(results_path, "r") as f:
+            results = json.load(f)
+        results["trained"] = True
+        return JSONResponse(content=results)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load ML comparison results: {str(e)}")
 
 
 # ---------------------------------------------------------

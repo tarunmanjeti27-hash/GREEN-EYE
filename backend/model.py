@@ -24,6 +24,45 @@ except Exception as e:
     print("[GREEN-EYE] Active Engine: Ultra-Fast Native NumPy & PIL Botanical Vision Engine")
 
 
+class GreenEyeClassifier:
+    """MobileNetV3-Small classifier for sugarcane leaf disease detection.
+    
+    Supports both random initialization and ImageNet pretrained weights
+    for transfer learning.
+    """
+    def __new__(cls, num_classes=5, pretrained=False):
+        """Factory that returns a torch.nn.Module if PyTorch is available."""
+        if not TORCH_AVAILABLE:
+            raise RuntimeError("PyTorch is required to create GreenEyeClassifier")
+        return _build_classifier(num_classes, pretrained)
+
+
+def _build_classifier(num_classes: int, pretrained: bool):
+    """Builds a MobileNetV3-Small based classifier module."""
+    if not TORCH_AVAILABLE:
+        raise RuntimeError("PyTorch is required")
+    
+    class _Classifier(nn.Module):
+        def __init__(self, n_classes, use_pretrained):
+            super().__init__()
+            if use_pretrained:
+                self.backbone = models.mobilenet_v3_small(weights=models.MobileNet_V3_Small_Weights.IMAGENET1K_V1)
+            else:
+                self.backbone = models.mobilenet_v3_small(weights=None)
+            in_features = self.backbone.classifier[0].in_features
+            self.backbone.classifier = nn.Sequential(
+                nn.Linear(in_features, 256),
+                nn.Hardswish(),
+                nn.Dropout(p=0.2),
+                nn.Linear(256, n_classes)
+            )
+
+        def forward(self, x):
+            return self.backbone(x)
+    
+    return _Classifier(num_classes, pretrained)
+
+
 class GreenEyeInferenceEngine:
     """Production inference engine with dual-tier deep vision & spectral analysis."""
     
@@ -45,23 +84,8 @@ class GreenEyeInferenceEngine:
     def _init_torch_model(self):
         if not self.torch_available:
             return
-            
-        class GreenEyeClassifier(nn.Module):
-            def __init__(self, num_classes=5):
-                super().__init__()
-                self.backbone = models.mobilenet_v3_small(weights=None)
-                in_features = self.backbone.classifier[0].in_features
-                self.backbone.classifier = nn.Sequential(
-                    nn.Linear(in_features, 256),
-                    nn.Hardswish(),
-                    nn.Dropout(p=0.2),
-                    nn.Linear(256, num_classes)
-                )
 
-            def forward(self, x):
-                return self.backbone(x)
-
-        self.model = GreenEyeClassifier(num_classes=len(CLASSES))
+        self.model = GreenEyeClassifier(num_classes=len(CLASSES), pretrained=False)
         self.model.to(self.device)
         self.model.eval()
         

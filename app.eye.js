@@ -721,6 +721,8 @@ const DOM = {
    ========================================================================== */
 
 function initApp() {
+  const savedLang = localStorage.getItem("greeneye_lang") || "en";
+  setVoiceLanguage(savedLang, false);
   initAuthSession();
   initEventListeners();
   renderDatasetGallery();
@@ -791,11 +793,13 @@ function applyLoggedInUI(user) {
   if (DOM.startingLoginGate) {
     DOM.startingLoginGate.classList.add("hidden");
   }
-  DOM.openLoginBtn.classList.add("hidden");
-  DOM.userProfileBadge.classList.remove("hidden");
+  if (DOM.openLoginBtn) DOM.openLoginBtn.classList.add("hidden");
+  if (DOM.userProfileBadge) DOM.userProfileBadge.classList.remove("hidden");
   const displayName = user.name ? `${user.name} (${user.email})` : user.email;
-  DOM.headerUserEmail.textContent = displayName;
-  DOM.headerUserEmail.title = displayName;
+  if (DOM.headerUserEmail) {
+    DOM.headerUserEmail.textContent = displayName;
+    DOM.headerUserEmail.title = displayName;
+  }
   if (DOM.footerAuthStatus) {
     DOM.footerAuthStatus.textContent = `Authenticated: ${displayName}`;
   }
@@ -803,16 +807,17 @@ function applyLoggedInUI(user) {
 
 function applyLoggedOutUI() {
   if (DOM.startingLoginGate) {
-    DOM.startingLoginGate.classList.remove("hidden");
+    DOM.startingLoginGate.classList.add("hidden");
   }
-  DOM.openLoginBtn.classList.remove("hidden");
-  DOM.userProfileBadge.classList.add("hidden");
+  if (DOM.openLoginBtn) DOM.openLoginBtn.classList.remove("hidden");
+  if (DOM.userProfileBadge) DOM.userProfileBadge.classList.add("hidden");
   if (DOM.footerAuthStatus) {
     DOM.footerAuthStatus.textContent = "Status: Guest Session (Sign in for Agronomist profile)";
   }
 }
 
 function showToast(message, isSuccess = true) {
+  if (!DOM.toastMsg || !DOM.toastNotification) return;
   DOM.toastMsg.textContent = message;
   DOM.toastNotification.classList.remove("hidden");
   setTimeout(() => {
@@ -825,106 +830,122 @@ function showToast(message, isSuccess = true) {
    ========================================================================== */
 
 function initEventListeners() {
-  // Authentication & Login Modal
-  DOM.openLoginBtn.addEventListener("click", () => {
-    window.location.href = "login.html";
-  });
+  // Authentication & Login Navigation
+  if (DOM.openLoginBtn) {
+    DOM.openLoginBtn.addEventListener("click", () => {
+      window.location.href = "login.html";
+    });
+  }
 
-  DOM.closeLoginModalBtn.addEventListener("click", () => {
-    if (DOM.startingLoginGate) {
-      DOM.startingLoginGate.classList.add("hidden");
-    }
-    showToast("Continuing in Guest Session. You can sign in anytime from the top bar.");
-  });
+  if (DOM.closeLoginModalBtn) {
+    DOM.closeLoginModalBtn.addEventListener("click", () => {
+      if (DOM.startingLoginGate) {
+        DOM.startingLoginGate.classList.add("hidden");
+      }
+      showToast("Continuing in Guest Session. You can sign in anytime from the top bar.");
+    });
+  }
 
   // Toggle Password Visibility
-  DOM.togglePwdBtn.addEventListener("click", () => {
-    const isPwd = DOM.loginPasswordInput.type === "password";
-    DOM.loginPasswordInput.type = isPwd ? "text" : "password";
-    DOM.togglePwdIcon.className = isPwd ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
-  });
+  if (DOM.togglePwdBtn && DOM.loginPasswordInput) {
+    DOM.togglePwdBtn.addEventListener("click", () => {
+      const isPwd = DOM.loginPasswordInput.type === "password";
+      DOM.loginPasswordInput.type = isPwd ? "text" : "password";
+      if (DOM.togglePwdIcon) DOM.togglePwdIcon.className = isPwd ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
+    });
+  }
 
   // Login Form Submission with Firebase Auth
-  DOM.loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name = DOM.loginNameInput ? DOM.loginNameInput.value.trim() : "";
-    const email = DOM.loginEmailInput.value.trim();
-    const pwd = DOM.loginPasswordInput.value;
+  if (DOM.loginForm) {
+    DOM.loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = DOM.loginNameInput ? DOM.loginNameInput.value.trim() : "";
+      const email = DOM.loginEmailInput ? DOM.loginEmailInput.value.trim() : "";
+      const pwd = DOM.loginPasswordInput ? DOM.loginPasswordInput.value : "";
 
-    if (!name) {
-      showLoginFeedback("Please enter your name.", false);
-      if (DOM.loginNameInput) DOM.loginNameInput.focus();
-      return;
-    }
+      if (!name) {
+        showLoginFeedback("Please enter your name.", false);
+        if (DOM.loginNameInput) DOM.loginNameInput.focus();
+        return;
+      }
 
-    if (!validateEmail(email)) {
-      showLoginFeedback("Please enter a valid Gmail address (e.g. name@gmail.com).", false);
-      DOM.loginEmailInput.focus();
-      return;
-    }
+      if (!validateEmail(email)) {
+        showLoginFeedback("Please enter a valid Gmail address (e.g. name@gmail.com).", false);
+        if (DOM.loginEmailInput) DOM.loginEmailInput.focus();
+        return;
+      }
 
-    if (pwd.length < 6) {
-      showLoginFeedback("Password must be at least 6 characters long.", false);
-      DOM.loginPasswordInput.focus();
-      return;
-    }
+      if (pwd.length < 6) {
+        showLoginFeedback("Password must be at least 6 characters long.", false);
+        if (DOM.loginPasswordInput) DOM.loginPasswordInput.focus();
+        return;
+      }
 
-    showLoginFeedback("Authenticating with Firebase...", true);
+      showLoginFeedback("Authenticating with Firebase...", true);
 
-    try {
-      const authResult = await authenticateFirebaseEmail(email, pwd);
-      if (authResult.success) {
-        performLoginSuccess(email, name, authResult.isNewUser ? "Firebase account created & signed in!" : "Signed in via Firebase Auth");
-      } else {
-        console.warn("Firebase Auth Notice:", authResult.error?.message || authResult.error);
+      try {
+        const authResult = await authenticateFirebaseEmail(email, pwd);
+        if (authResult.success) {
+          performLoginSuccess(email, name, authResult.isNewUser ? "Firebase account created & signed in!" : "Signed in via Firebase Auth");
+        } else {
+          console.warn("Firebase Auth Notice:", authResult.error?.message || authResult.error);
+          performLoginSuccess(email, name, "Authenticated as Field Agronomist");
+        }
+      } catch (err) {
         performLoginSuccess(email, name, "Authenticated as Field Agronomist");
       }
-    } catch (err) {
-      performLoginSuccess(email, name, "Authenticated as Field Agronomist");
-    }
-  });
+    });
+  }
 
-  // 1-Click Google Sign In with Firebase
-  DOM.googleSignInBtn.addEventListener("click", async () => {
-    showLoginFeedback("Connecting to Google Auth...", true);
-    try {
-      const gResult = await authenticateWithGoogle();
-      if (gResult.success && gResult.user) {
-        performLoginSuccess(gResult.user.email, gResult.user.displayName || "Google Agronomist", "Google Account Verified via Firebase");
-      } else {
+  // 1-Click Google Sign In with Firebase (if present)
+  if (DOM.googleSignInBtn) {
+    DOM.googleSignInBtn.addEventListener("click", async () => {
+      showLoginFeedback("Connecting to Google Auth...", true);
+      try {
+        const gResult = await authenticateWithGoogle();
+        if (gResult.success && gResult.user) {
+          performLoginSuccess(gResult.user.email, gResult.user.displayName || "Google Agronomist", "Google Account Verified via Firebase");
+        } else {
+          performLoginSuccess("agronomist.research@gmail.com", "Dr. Tarun Kumar", "Google Account Verified");
+        }
+      } catch (err) {
         performLoginSuccess("agronomist.research@gmail.com", "Dr. Tarun Kumar", "Google Account Verified");
       }
-    } catch (err) {
-      performLoginSuccess("agronomist.research@gmail.com", "Dr. Tarun Kumar", "Google Account Verified");
-    }
-  });
+    });
+  }
 
-  // 1-Click Quick Demo Login
-  DOM.quickDemoLoginBtn.addEventListener("click", () => {
-    if (DOM.loginNameInput) DOM.loginNameInput.value = "Dr. Tarun Kumar";
-    DOM.loginEmailInput.value = "agronomist@gmail.com";
-    DOM.loginPasswordInput.value = "GreenEye2026!";
-    performLoginSuccess("agronomist@gmail.com", "Dr. Tarun Kumar", "Auto-filled Agronomist Credentials");
-  });
+  // 1-Click Quick Demo Login (if present)
+  if (DOM.quickDemoLoginBtn) {
+    DOM.quickDemoLoginBtn.addEventListener("click", () => {
+      if (DOM.loginNameInput) DOM.loginNameInput.value = "Dr. Tarun Kumar";
+      if (DOM.loginEmailInput) DOM.loginEmailInput.value = "agronomist@gmail.com";
+      if (DOM.loginPasswordInput) DOM.loginPasswordInput.value = "GreenEye2026!";
+      performLoginSuccess("agronomist@gmail.com", "Dr. Tarun Kumar", "Auto-filled Agronomist Credentials");
+    });
+  }
 
   // Header Logout with Firebase
-  DOM.headerLogoutBtn.addEventListener("click", async () => {
-    try {
-      await signOutFirebase();
-    } catch (e) {}
-    AppState.currentUser = null;
-    sessionStorage.removeItem("greeneye_session_active");
-    sessionStorage.removeItem("greeneye_authenticated");
-    localStorage.removeItem("greeneye_user");
-    window.location.href = "login.html";
-  });
+  if (DOM.headerLogoutBtn) {
+    DOM.headerLogoutBtn.addEventListener("click", async () => {
+      try {
+        await signOutFirebase();
+      } catch (e) {}
+      AppState.currentUser = null;
+      sessionStorage.removeItem("greeneye_session_active");
+      sessionStorage.removeItem("greeneye_authenticated");
+      localStorage.removeItem("greeneye_user");
+      window.location.href = "login.html";
+    });
+  }
 
   // Forgot password mock
-  DOM.forgotPwdLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    const email = DOM.loginEmailInput.value.trim() || "your email";
-    alert(`Password reset instructions have been dispatched to ${email}. (You may also use the 1-Click Demo Login to enter instantly).`);
-  });
+  if (DOM.forgotPwdLink) {
+    DOM.forgotPwdLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      const email = (DOM.loginEmailInput && DOM.loginEmailInput.value.trim()) || "your email";
+      alert(`Password reset instructions have been dispatched to ${email}. (You may also use the 1-Click Demo Login to enter instantly).`);
+    });
+  }
 
   // Multilingual Controls (Top Voice Bar, Navigation Header, Login Gate, Right-Side Diagnosis Card)
   const langTriggerMap = [
@@ -944,23 +965,49 @@ function initEventListeners() {
   langTriggerMap.forEach(item => {
     if (item.el) {
       item.el.addEventListener("click", (e) => {
+        e.preventDefault();
         e.stopPropagation();
-        setVoiceLanguage(item.lang);
+        setVoiceLanguage(item.lang, true);
       });
     }
   });
 
+  // Universal Document-Level Click Handler for Language Switchers (handles child elements & flags)
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".btn-lang, .btn-header-lang, .btn-login-lang, .btn-result-lang, .btn-top-lang");
+    if (btn) {
+      const lang = btn.getAttribute("data-lang");
+      if (lang && (lang === "en" || lang === "te" || lang === "hi")) {
+        e.preventDefault();
+        e.stopPropagation();
+        setVoiceLanguage(lang, true);
+      }
+    }
+  });
+
   if (DOM.voiceExplainBtn) {
-    DOM.voiceExplainBtn.addEventListener("click", () => explainScreen(AppState.voiceLanguage));
+    DOM.voiceExplainBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      explainScreen(AppState.voiceLanguage);
+    });
   }
   if (DOM.voiceStopBtn) {
-    DOM.voiceStopBtn.addEventListener("click", stopSpeech);
+    DOM.voiceStopBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      stopSpeech();
+    });
   }
   if (DOM.speakDiagnosisBtn) {
-    DOM.speakDiagnosisBtn.addEventListener("click", () => explainCurrentDiagnosis(AppState.voiceLanguage));
+    DOM.speakDiagnosisBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      explainCurrentDiagnosis(AppState.voiceLanguage);
+    });
   }
   if (DOM.speakDosageBtn) {
-    DOM.speakDosageBtn.addEventListener("click", () => explainDosagePlan(AppState.voiceLanguage));
+    DOM.speakDosageBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      explainDosagePlan(AppState.voiceLanguage);
+    });
   }
 
   // Browse File Button
@@ -1026,20 +1073,16 @@ function initEventListeners() {
     AppState.soundEnabled = !AppState.soundEnabled;
     if (AppState.soundEnabled) {
       DOM.soundIcon.className = "fa-solid fa-volume-high";
-      speakText("GREEN-EYE voice announcements enabled");
+      const announcements = {
+        en: "GREEN-EYE voice announcements enabled",
+        te: "గ్రీన్-ఐ వాయిస్ సేవలు ప్రారంభించబడ్డాయి",
+        hi: "ग्रीन-आई वॉइस सेवाएं चालू कर दी गई हैं"
+      };
+      speakMultilingual(announcements[AppState.voiceLanguage] || announcements.en, AppState.voiceLanguage);
     } else {
       DOM.soundIcon.className = "fa-solid fa-volume-xmark";
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      stopSpeech();
     }
-  });
-
-  // Speak Diagnosis
-  DOM.speakDiagnosisBtn.addEventListener("click", () => {
-    if (!AppState.analysisData) return;
-    const { topClass, confidence } = AppState.analysisData;
-    const info = DISEASE_KNOWLEDGE[topClass];
-    const text = `GREEN-EYE Diagnosis complete: ${info.title} identified with ${confidence}% confidence. ${info.immediate}`;
-    speakText(text);
   });
 
   // Report Modal Triggers
@@ -1251,7 +1294,9 @@ function resetImageViewer() {
    Computer Vision & Diagnostic Analysis
    ========================================================================== */
 
-const API_BASE_URL = window.location.origin;
+const API_BASE_URL = (window.location.protocol.startsWith("http") && window.location.origin !== "null")
+  ? (window.location.port === "8000" ? window.location.origin : (window.location.hostname ? `${window.location.protocol}//${window.location.hostname}:8000` : "http://localhost:8000"))
+  : "http://localhost:8000";
 
 async function startDiagnosticPipeline() {
   // Show Loading & Laser
@@ -1263,8 +1308,8 @@ async function startDiagnosticPipeline() {
 
   let backendSuccess = false;
 
-  // Attempt FastAPI backend diagnosis if running over HTTP/HTTPS
-  if (AppState.currentImageSrc && window.location.protocol.startsWith("http")) {
+  // Attempt FastAPI backend diagnosis
+  if (AppState.currentImageSrc) {
     try {
       let response;
       if (AppState.currentImageSrc.startsWith("data:image")) {
@@ -1439,11 +1484,14 @@ function runPixelSpectralAnalysis() {
     height
   };
 
-  renderDiagnosticVerdict(topClass, maxScore.toFixed(1), probs);
+  renderDiagnosticVerdict(topClass, maxScore.toFixed(1), probs, AppState.voiceLanguage);
   renderOverlayCanvas();
 
   // Live Cloud Firestore Synchronization (Collection: diagnostic_scans)
   syncScanToFirestore(topClass, maxScore.toFixed(1), greenPct, redPct, yellowPct, texturePct);
+
+  // Automatically speak diagnosis and prescriptions in user's selected language
+  explainCurrentDiagnosis(AppState.voiceLanguage);
 }
 
 function computeClassProbabilities(g, r, y, t) {
@@ -1489,17 +1537,21 @@ function computeClassProbabilities(g, r, y, t) {
 }
 
 function renderDiagnosticVerdict(topClass, confidence, probs, lang = AppState.voiceLanguage) {
+  const baseInfo = DISEASE_KNOWLEDGE[topClass] || DISEASE_KNOWLEDGE.Healthy;
   const langDict = (typeof MULTILINGUAL_DISEASE_KNOWLEDGE !== "undefined" && MULTILINGUAL_DISEASE_KNOWLEDGE[lang]) ? MULTILINGUAL_DISEASE_KNOWLEDGE[lang] : DISEASE_KNOWLEDGE;
-  const info = langDict[topClass] || DISEASE_KNOWLEDGE[topClass];
+  const info = (langDict && langDict[topClass]) ? langDict[topClass] : baseInfo;
   const ui = (typeof UI_LABELS !== "undefined" && UI_LABELS[lang]) ? UI_LABELS[lang] : UI_LABELS.en;
 
+  const colorClass = info.colorClass || baseInfo.colorClass;
+  const icon = info.icon || baseInfo.icon;
+
   // Verdict Banner
-  DOM.verdictBanner.className = `verdict-banner ${info.colorClass}`;
-  DOM.verdictIcon.innerHTML = `<i class="fa-solid ${info.icon}"></i>`;
+  DOM.verdictBanner.className = `verdict-banner ${colorClass}`;
+  DOM.verdictIcon.innerHTML = `<i class="fa-solid ${icon}"></i>`;
   DOM.verdictClassBadge.textContent = topClass.toUpperCase();
-  DOM.verdictSeverityBadge.textContent = info.severity;
-  DOM.verdictTitle.textContent = info.title;
-  DOM.verdictPathogen.innerHTML = `${ui.causalAgent || 'Causal Agent'}: <em>${info.pathogen}</em>`;
+  DOM.verdictSeverityBadge.textContent = info.severity || baseInfo.severity;
+  DOM.verdictTitle.textContent = info.title || baseInfo.title;
+  DOM.verdictPathogen.innerHTML = `${ui.causalAgent || 'Causal Agent'}: <em>${info.pathogen || baseInfo.pathogen}</em>`;
   DOM.verdictScore.textContent = `${confidence}%`;
 
   // Bars
@@ -1510,10 +1562,10 @@ function renderDiagnosticVerdict(topClass, confidence, probs, lang = AppState.vo
   });
 
   // Prescriptions in selected language
-  DOM.prescImmediate.textContent = info.immediate;
-  DOM.prescChemical.textContent = info.chemical;
-  DOM.prescBiological.textContent = info.biological;
-  DOM.prescFollowup.textContent = info.followup;
+  DOM.prescImmediate.textContent = info.immediate || baseInfo.immediate;
+  DOM.prescChemical.textContent = info.chemical || baseInfo.chemical;
+  DOM.prescBiological.textContent = info.biological || baseInfo.biological;
+  DOM.prescFollowup.textContent = info.followup || baseInfo.followup;
 }
 
 function renderOverlayCanvas() {
@@ -1883,76 +1935,23 @@ const MULTILINGUAL_AGRONOMY_DATA = {
   }
 };
 
-function speakMultilingual(text, lang = AppState.voiceLanguage) {
-  if (!text) return;
-
-  // Always update subtitle ribbon
-  updateSubtitle(text, true);
-
-  if (!('speechSynthesis' in window) || !AppState.soundEnabled) {
-    return;
-  }
-
-  try {
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    
-    // Set appropriate language tag
-    if (lang === "te") {
-      utterance.lang = "te-IN";
-    } else if (lang === "hi") {
-      utterance.lang = "hi-IN";
-    } else {
-      utterance.lang = "en-IN";
-    }
-
-    // Try finding matching voice
-    const voices = window.speechSynthesis.getVoices();
-    if (voices && voices.length > 0) {
-      let matchedVoice = null;
-      if (lang === "te") {
-        matchedVoice = voices.find(v => v.lang && (v.lang.toLowerCase().includes("te") || v.name.toLowerCase().includes("telugu")));
-      } else if (lang === "hi") {
-        matchedVoice = voices.find(v => v.lang && (v.lang.toLowerCase().includes("hi") || v.name.toLowerCase().includes("hindi")));
-      } else {
-        matchedVoice = voices.find(v => v.lang && (v.lang.startsWith("en-IN") || v.lang.startsWith("en-GB") || v.lang.startsWith("en-US")));
-      }
-      if (matchedVoice) {
-        utterance.voice = matchedVoice;
-      }
-    }
-
-    utterance.rate = lang === "en" ? 0.95 : 0.88;
-    utterance.pitch = 1.0;
-
-    utterance.onstart = () => {
-      AppState.isSpeaking = true;
-      if (DOM.voiceWaveform) DOM.voiceWaveform.classList.add("speaking");
-      if (DOM.voiceSubtitleStrip) DOM.voiceSubtitleStrip.classList.add("speaking");
-    };
-
-    utterance.onend = () => {
-      AppState.isSpeaking = false;
-      if (DOM.voiceWaveform) DOM.voiceWaveform.classList.remove("speaking");
-      if (DOM.voiceSubtitleStrip) DOM.voiceSubtitleStrip.classList.remove("speaking");
-    };
-
-    utterance.onerror = () => {
-      AppState.isSpeaking = false;
-      if (DOM.voiceWaveform) DOM.voiceWaveform.classList.remove("speaking");
-      if (DOM.voiceSubtitleStrip) DOM.voiceSubtitleStrip.classList.remove("speaking");
-    };
-
-    window.speechSynthesis.speak(utterance);
-  } catch (err) {
-    console.log("[GREEN-EYE Speech notice]", err);
-  }
-}
+// Global Speech Engine State (Google Neural TTS Stream + Native Fallback)
+let currentAudioStream = null;
+let speechAudioQueue = [];
+let isAudioStreaming = false;
 
 function stopSpeech() {
+  if (currentAudioStream) {
+    try {
+      currentAudioStream.pause();
+      currentAudioStream.currentTime = 0;
+    } catch(e) {}
+    currentAudioStream = null;
+  }
+  speechAudioQueue = [];
+  isAudioStreaming = false;
   if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
+    try { window.speechSynthesis.cancel(); } catch(e) {}
   }
   AppState.isSpeaking = false;
   if (DOM.voiceWaveform) DOM.voiceWaveform.classList.remove("speaking");
@@ -1972,14 +1971,141 @@ function updateSubtitle(text, isSpeaking = true) {
   }
 }
 
-function setVoiceLanguage(lang) {
-  if (!MULTILINGUAL_AGRONOMY_DATA[lang]) return;
+function chunkTextForSpeech(text, maxLen = 140) {
+  if (!text) return [];
+  // Split on sentences / punctuation marks
+  const rawSentences = text.split(/(?<=[.!?।\n])\s+/);
+  const chunks = [];
+  let buffer = "";
+
+  for (const sentence of rawSentences) {
+    const s = sentence.trim();
+    if (!s) continue;
+    if ((buffer + " " + s).trim().length <= maxLen) {
+      buffer = (buffer + " " + s).trim();
+    } else {
+      if (buffer) chunks.push(buffer);
+      if (s.length <= maxLen) {
+        buffer = s;
+      } else {
+        // Subdivide long clause by comma or words
+        const words = s.split(/\s+/);
+        let sub = "";
+        for (const w of words) {
+          if ((sub + " " + w).trim().length <= maxLen) {
+            sub = (sub + " " + w).trim();
+          } else {
+            if (sub) chunks.push(sub);
+            sub = w;
+          }
+        }
+        buffer = sub;
+      }
+    }
+  }
+  if (buffer) chunks.push(buffer);
+  return chunks;
+}
+
+function speakMultilingual(text, lang = AppState.voiceLanguage) {
+  if (!text) return;
+  stopSpeech();
+
+  // Always update subtitle ribbon
+  updateSubtitle(text, true);
+
+  if (!AppState.soundEnabled) return;
+
+  const chunks = chunkTextForSpeech(text);
+  if (chunks.length === 0) return;
+
+  speechAudioQueue = [...chunks];
+  isAudioStreaming = true;
+  AppState.isSpeaking = true;
+  if (DOM.voiceWaveform) DOM.voiceWaveform.classList.add("speaking");
+  if (DOM.voiceSubtitleStrip) DOM.voiceSubtitleStrip.classList.add("speaking");
+
+  playNextSpeechChunk(lang);
+}
+
+function playNextSpeechChunk(lang) {
+  if (!isAudioStreaming || speechAudioQueue.length === 0) {
+    stopSpeech();
+    return;
+  }
+
+  const chunk = speechAudioQueue.shift();
+  const ttsLang = lang === "te" ? "te" : (lang === "hi" ? "hi" : "en");
+  const encoded = encodeURIComponent(chunk);
+  const streamUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encoded}&tl=${ttsLang}&client=tw-ob`;
+
+  const audio = new Audio();
+  currentAudioStream = audio;
+  let streamFailed = false;
+
+  audio.onended = () => {
+    if (isAudioStreaming) {
+      playNextSpeechChunk(lang);
+    }
+  };
+
+  audio.onerror = () => {
+    streamFailed = true;
+    fallbackSpeakUtterance(chunk, lang, () => {
+      if (isAudioStreaming) {
+        playNextSpeechChunk(lang);
+      }
+    });
+  };
+
+  const playPromise = audio.play();
+  if (playPromise !== undefined) {
+    playPromise.catch(() => {
+      if (!streamFailed) {
+        fallbackSpeakUtterance(chunk, lang, () => {
+          if (isAudioStreaming) {
+            playNextSpeechChunk(lang);
+          }
+        });
+      }
+    });
+  }
+}
+
+function fallbackSpeakUtterance(text, lang, callback) {
+  if (!('speechSynthesis' in window)) {
+    if (callback) callback();
+    return;
+  }
+  try {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang === "te" ? "te-IN" : (lang === "hi" ? "hi-IN" : "en-IN");
+    utterance.rate = lang === "en" ? 0.95 : 0.9;
+
+    const voices = window.speechSynthesis.getVoices();
+    if (voices && voices.length > 0) {
+      const match = voices.find(v => v.lang && v.lang.toLowerCase().includes(lang));
+      if (match) utterance.voice = match;
+    }
+
+    utterance.onend = () => { if (callback) callback(); };
+    utterance.onerror = () => { if (callback) callback(); };
+
+    window.speechSynthesis.speak(utterance);
+  } catch (err) {
+    if (callback) callback();
+  }
+}
+
+function setVoiceLanguage(lang, shouldSpeak = true) {
+  if (!MULTILINGUAL_AGRONOMY_DATA[lang]) lang = "en";
   AppState.voiceLanguage = lang;
+  localStorage.setItem("greeneye_lang", lang);
   const langData = MULTILINGUAL_AGRONOMY_DATA[lang];
   const ui = (typeof UI_LABELS !== "undefined" && UI_LABELS[lang]) ? UI_LABELS[lang] : UI_LABELS.en;
 
   // 1. Sync active classes across ALL language buttons (top bar, header, login gate, results card)
-  document.querySelectorAll(".btn-lang, .btn-header-lang, .btn-login-lang, .btn-result-lang").forEach(btn => {
+  document.querySelectorAll(".btn-lang, .btn-header-lang, .btn-login-lang, .btn-result-lang, .btn-top-lang").forEach(btn => {
     if (btn.getAttribute("data-lang") === lang) {
       btn.classList.add("active");
     } else {
@@ -2083,14 +2209,21 @@ function setVoiceLanguage(lang) {
   if (DOM.probNameRust) DOM.probNameRust.textContent = ui.probRust;
   if (DOM.probNameYellow) DOM.probNameYellow.textContent = ui.probYellow;
 
-  // 9. If diagnosis is currently active, immediately re-render right-side card in chosen language and speak it
-  if (AppState.analysisData) {
-    const { topClass, confidence, probabilities } = AppState.analysisData;
-    renderDiagnosticVerdict(topClass, confidence, probabilities, lang);
-    explainCurrentDiagnosis(lang);
+  // 9. If shouldSpeak is true, play speech
+  if (shouldSpeak) {
+    if (AppState.analysisData) {
+      const { topClass, confidence, probabilities } = AppState.analysisData;
+      renderDiagnosticVerdict(topClass, confidence, probabilities, lang);
+      explainCurrentDiagnosis(lang);
+    } else {
+      speakMultilingual(langData.greeting, lang);
+    }
   } else {
-    // Greet user in newly selected language
-    speakMultilingual(langData.greeting, lang);
+    updateSubtitle(langData.greeting, false);
+    if (AppState.analysisData) {
+      const { topClass, confidence, probabilities } = AppState.analysisData;
+      renderDiagnosticVerdict(topClass, confidence, probabilities, lang);
+    }
   }
 }
 

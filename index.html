@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="font-awesome.css">
   
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=4.0">
+  <link rel="stylesheet" href="style.css?v=4.2">
 
   <!-- Immediate Authentication Check: Unauthenticated visitors land on login.html -->
   <script>
@@ -165,110 +165,6 @@
       </div>
     </div>
   </header>
-
-  <!-- Starting Login Page Gate Overlay -->
-  <div class="starting-login-gate" id="startingLoginGate">
-    <div class="starting-login-card" id="loginModalCard">
-      <!-- Starting Login Language Switcher -->
-      <div class="login-lang-switcher" id="loginLangSwitcher">
-        <span class="login-lang-label"><i class="fa-solid fa-language"></i> <span id="lblLoginLang">Language / భాష / भाषा:</span></span>
-        <div class="login-lang-pills">
-          <button type="button" class="btn-login-lang active" data-lang="en" id="loginLangEn">English</button>
-          <button type="button" class="btn-login-lang" data-lang="te" id="loginLangTe">తెలుగు</button>
-          <button type="button" class="btn-login-lang" data-lang="hi" id="loginLangHi">हिंदी</button>
-        </div>
-      </div>
-
-      <div class="login-modal-header">
-        <div class="login-brand-display">
-          <div class="logo-icon-box large">
-            <i class="fa-solid fa-eye"></i>
-            <span class="logo-pulse"></span>
-          </div>
-          <h2 id="loginGateTitle">Welcome to GREEN-EYE</h2>
-          <p id="loginGateSub">Precision Sugarcane Pathology & Agronomic Diagnostic Platform</p>
-        </div>
-        <button class="modal-close-btn" id="closeLoginModalBtn" title="Close / Continue to Platform">&times;</button>
-      </div>
-
-      <div class="login-modal-body">
-        <!-- Quick 1-Click Google / Gmail Access -->
-        <button type="button" class="btn btn-google btn-block" id="googleSignInBtn">
-          <i class="fa-brands fa-google text-google"></i> <span id="googleSignInBtnText">Continue with Google / Gmail</span>
-        </button>
-
-        <div class="login-divider">
-          <span id="lblLoginDivider">OR ENTER NAME, GMAIL & PASSWORD</span>
-        </div>
-
-        <!-- Feedback Alert Box -->
-        <div class="login-feedback hidden" id="loginFeedback">
-          <i class="fa-solid fa-circle-exclamation"></i>
-          <span id="loginFeedbackText">Invalid email or password</span>
-        </div>
-
-        <form id="loginForm" class="login-form">
-          <div class="form-group">
-            <label class="form-label" for="loginNameInput" id="lblLoginName">
-              <i class="fa-solid fa-user"></i> Full Name / Username
-            </label>
-            <div class="input-icon-wrap">
-              <i class="fa-solid fa-id-badge input-prefix-icon"></i>
-              <input type="text" id="loginNameInput" class="form-input with-prefix" placeholder="e.g. M Tarun Kumar or Field Agronomist" required autocomplete="name">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="loginEmailInput" id="lblLoginEmail">
-              <i class="fa-solid fa-envelope"></i> Gmail Address / Username
-            </label>
-            <div class="input-icon-wrap">
-              <i class="fa-solid fa-at input-prefix-icon"></i>
-              <input type="email" id="loginEmailInput" class="form-input with-prefix" placeholder="e.g. tarunmanjeti@gmail.com" required autocomplete="email">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div class="form-label-row">
-              <label class="form-label" for="loginPasswordInput" id="lblLoginPassword">
-                <i class="fa-solid fa-lock"></i> Password
-              </label>
-              <a href="#" class="forgot-pwd-link" id="forgotPwdLink">Forgot Password?</a>
-            </div>
-            <div class="input-icon-wrap">
-              <i class="fa-solid fa-key input-prefix-icon"></i>
-              <input type="password" id="loginPasswordInput" class="form-input with-prefix" placeholder="Enter password (min 6 characters)" required autocomplete="current-password">
-              <button type="button" class="btn-toggle-pwd" id="togglePwdBtn" title="Toggle password visibility">
-                <i class="fa-solid fa-eye" id="togglePwdIcon"></i>
-              </button>
-            </div>
-          </div>
-
-          <div class="login-remember-row">
-            <label class="checkbox-label">
-              <input type="checkbox" id="rememberMeCheckbox" checked>
-              <span id="lblRememberMe">Keep me signed in</span>
-            </label>
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitLoginBtn">
-            <i class="fa-solid fa-shield-halved"></i> <span id="submitLoginBtnText">Authenticate & Enter GREEN-EYE</span>
-          </button>
-        </form>
-
-        <!-- Quick 1-Click Demo Fill Button -->
-        <div class="demo-login-box">
-          <button type="button" class="btn btn-secondary btn-block btn-sm" id="quickDemoLoginBtn">
-            <i class="fa-solid fa-bolt text-yellow"></i> <span id="quickDemoBtnText">1-Click Quick Demo Login (Tarun Kumar / agronomist@gmail.com)</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="login-modal-footer">
-        <p><i class="fa-solid fa-lock text-green"></i> <span id="lblLoginFooter">Encrypted Session: Any valid <strong>@gmail.com</strong> or agronomist credentials accepted.</span></p>
-      </div>
-    </div>
-  </div>
 
   <!-- Hero Section -->
   <section class="hero-section" id="hero">
@@ -1374,6 +1270,6 @@
   </div>
 
   <!-- Main JavaScript Application Logic (ES Module with Firebase) -->
-  <script type="module" src="app.js?v=4.0"></script>
+  <script type="module" src="app.js?v=4.2"></script>
 </body>
 </html>

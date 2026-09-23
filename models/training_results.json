@@ -1,0 +1,159 @@
+{
+  "model": "MobileNetV3-Small (ImageNet Transfer Learning)",
+  "total_images": 2521,
+  "train_size": 2017,
+  "val_size": 504,
+  "epochs_trained": 10,
+  "best_epoch": 10,
+  "overall_accuracy": 99.01,
+  "per_class_metrics": {
+    "Healthy": {
+      "accuracy": 100.0,
+      "precision": 0.9914,
+      "recall": 1.0,
+      "f1_score": 0.9957,
+      "support": 115,
+      "true_positives": 115,
+      "false_positives": 1,
+      "false_negatives": 0
+    },
+    "Mosaic": {
+      "accuracy": 97.65,
+      "precision": 0.9881,
+      "recall": 0.9765,
+      "f1_score": 0.9822,
+      "support": 85,
+      "true_positives": 83,
+      "false_positives": 1,
+      "false_negatives": 2
+    },
+    "RedRot": {
+      "accuracy": 98.08,
+      "precision": 1.0,
+      "recall": 0.9808,
+      "f1_score": 0.9903,
+      "support": 104,
+      "true_positives": 102,
+      "false_positives": 0,
+      "false_negatives": 2
+    },
+    "Rust": {
+      "accuracy": 100.0,
+      "precision": 0.9895,
+      "recall": 1.0,
+      "f1_score": 0.9947,
+      "support": 94,
+      "true_positives": 94,
+      "false_positives": 1,
+      "false_negatives": 0
+    },
+    "Yellow": {
+      "accuracy": 99.06,
+      "precision": 0.9813,
+      "recall": 0.9906,
+      "f1_score": 0.9859,
+      "support": 106,
+      "true_positives": 105,
+      "false_positives": 2,
+      "false_negatives": 1
+    }
+  },
+  "confusion_matrix": {
+    "labels": [
+      "Healthy",
+      "Mosaic",
+      "RedRot",
+      "Rust",
+      "Yellow"
+    ],
+    "matrix": [
+      [
+        115,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        83,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        102,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        94,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        105
+      ]
+    ]
+  },
+  "training_history": {
+    "train_loss": [
+      0.6903,
+      0.3634,
+      0.2547,
+      0.2247,
+      0.1757,
+      0.1277,
+      0.1118,
+      0.0692,
+      0.065,
+      0.0571
+    ],
+    "train_acc": [
+      74.22,
+      87.01,
+      91.03,
+      92.71,
+      93.95,
+      95.88,
+      95.74,
+      97.37,
+      97.77,
+      98.17
+    ],
+    "val_acc": [
+      88.29,
+      92.06,
+      89.09,
+      89.88,
+      96.43,
+      96.43,
+      96.83,
+      98.61,
+      98.61,
+      99.01
+    ],
+    "epoch_time_sec": [
+      111.1,
+      107.7,
+      98.0,
+      92.8,
+      98.1,
+      219.5,
+      93.0,
+      90.8,
+      91.4,
+      100.9
+    ]
+  },
+  "device": "cpu",
+  "checkpoint_path": "C:\\Users\\M Tarun Kumar\\OneDrive\\Desktop\\TRAINING\\Sugarcane Leaf Disease Dataset\\models\\green_eye_model.pth"
+}

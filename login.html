@@ -14,7 +14,7 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="font-awesome.css">
-  <link rel="stylesheet" href="style.css?v=3.9">
+  <link rel="stylesheet" href="style.css?v=4.2">
 
   <style>
     /* Dedicated Login Page Styles */
@@ -473,14 +473,6 @@
         <p id="pageLoginSub">Precision Sugarcane Leaf Pathology & Agronomy AI Lab</p>
       </div>
 
-      <!-- Quick 1-Click Google Access -->
-      <button type="button" class="btn-google" id="btnGoogleSignIn">
-        <i class="fa-brands fa-google text-google"></i> <span id="txtGoogleSignIn">Continue with Google / Gmail</span>
-      </button>
-
-      <div class="login-divider">
-        <span id="txtDivider">OR SIGN IN WITH CREDENTIALS</span>
-      </div>
 
       <!-- Feedback Alert -->
       <div class="login-feedback hidden" id="loginFeedback">
@@ -644,8 +636,8 @@
       document.getElementById("lblLangSelect").textContent = t.langSelect;
       document.getElementById("pageLoginTitle").textContent = t.title;
       document.getElementById("pageLoginSub").textContent = t.sub;
-      document.getElementById("txtGoogleSignIn").textContent = t.googleBtn;
-      document.getElementById("txtDivider").textContent = t.divider;
+      if (document.getElementById("txtGoogleSignIn")) document.getElementById("txtGoogleSignIn").textContent = t.googleBtn;
+      if (document.getElementById("txtDivider")) document.getElementById("txtDivider").textContent = t.divider;
       document.getElementById("lblName").innerHTML = `<i class="fa-solid fa-user"></i> ${t.nameLabel}`;
       document.getElementById("inputName").placeholder = t.namePlaceholder;
       document.getElementById("lblEmail").innerHTML = `<i class="fa-solid fa-envelope"></i> ${t.emailLabel}`;
@@ -664,21 +656,33 @@
       }
     }
 
+    let loginAudio = null;
     function speakText(text, lang) {
-      if (!window.speechSynthesis) return;
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      if (lang === "te") {
-        utterance.lang = "te-IN";
-        utterance.rate = 0.95;
-      } else if (lang === "hi") {
-        utterance.lang = "hi-IN";
-        utterance.rate = 0.95;
-      } else {
-        utterance.lang = "en-IN";
-        utterance.rate = 1.0;
+      if (loginAudio) {
+        try { loginAudio.pause(); loginAudio.currentTime = 0; } catch(e) {}
+        loginAudio = null;
       }
-      window.speechSynthesis.speak(utterance);
+      if ('speechSynthesis' in window) {
+        try { window.speechSynthesis.cancel(); } catch(e) {}
+      }
+
+      const ttsLang = lang === "te" ? "te" : (lang === "hi" ? "hi" : "en");
+      const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text.slice(0, 160))}&tl=${ttsLang}&client=tw-ob`;
+      const audio = new Audio(url);
+      loginAudio = audio;
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Fallback to native SpeechSynthesis
+          try {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang === "te" ? "te-IN" : (lang === "hi" ? "hi-IN" : "en-IN");
+            utterance.rate = 0.95;
+            window.speechSynthesis.speak(utterance);
+          } catch(e) {}
+        });
+      }
     }
 
     function showFeedback(msg, isSuccess = false) {
@@ -706,12 +710,22 @@
       }, 700);
     }
 
-    // Attach Language Buttons
+    // Attach Language Buttons with universal click listener
     document.querySelectorAll(".btn-top-lang").forEach(btn => {
       btn.addEventListener("click", () => {
         const lang = btn.getAttribute("data-lang");
         applyLanguage(lang, true);
       });
+    });
+
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".btn-top-lang");
+      if (btn) {
+        const lang = btn.getAttribute("data-lang");
+        if (lang) {
+          applyLanguage(lang, true);
+        }
+      }
     });
 
     // Toggle Password Visibility
@@ -763,20 +777,23 @@
       handleLoginSuccess("agronomist@gmail.com", "Dr. Tarun Kumar");
     });
 
-    // 1-Click Google Sign In
-    document.getElementById("btnGoogleSignIn").addEventListener("click", async () => {
-      showFeedback("Connecting to Google Auth...", true);
-      try {
-        const gRes = await authenticateWithGoogle();
-        if (gRes.success && gRes.user) {
-          handleLoginSuccess(gRes.user.email, gRes.user.displayName || "Google Agronomist");
-        } else {
+    // Optional Google Sign In Handler
+    const googleBtnEl = document.getElementById("btnGoogleSignIn");
+    if (googleBtnEl) {
+      googleBtnEl.addEventListener("click", async () => {
+        showFeedback("Connecting to Google Auth...", true);
+        try {
+          const gRes = await authenticateWithGoogle();
+          if (gRes.success && gRes.user) {
+            handleLoginSuccess(gRes.user.email, gRes.user.displayName || "Google Agronomist");
+          } else {
+            handleLoginSuccess("agronomist.research@gmail.com", "Dr. Tarun Kumar");
+          }
+        } catch (e) {
           handleLoginSuccess("agronomist.research@gmail.com", "Dr. Tarun Kumar");
         }
-      } catch (e) {
-        handleLoginSuccess("agronomist.research@gmail.com", "Dr. Tarun Kumar");
-      }
-    });
+      });
+    }
 
     // Guest link
     document.getElementById("linkGuestAccess").addEventListener("click", () => {

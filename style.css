@@ -261,8 +261,7 @@ a {
    ========================================================================== */
 
 .site-header {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 1000;
   background: rgba(3, 10, 5, 0.88);
   backdrop-filter: blur(22px);
@@ -2622,8 +2621,8 @@ a {
 .voice-agent-bar {
   position: sticky;
   top: 0;
-  z-index: 1050;
-  background: linear-gradient(135deg, rgba(6, 26, 17, 0.96), rgba(10, 38, 24, 0.94));
+  z-index: 2000;
+  background: linear-gradient(135deg, rgba(6, 26, 17, 0.98), rgba(10, 38, 24, 0.96));
   border-bottom: 1px solid rgba(16, 185, 129, 0.28);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -2757,31 +2756,35 @@ a {
 }
 
 .btn-lang {
-  background: transparent;
-  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   color: #cbd5e1;
-  font-size: 0.78rem;
-  font-weight: 500;
-  padding: 4px 10px;
-  border-radius: 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
+  pointer-events: auto;
+  user-select: none;
   transition: all 0.2s ease;
 }
 
 .btn-lang:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #34d399;
   color: #ffffff;
+  transform: translateY(-1px);
 }
 
 .btn-lang.active {
-  background: rgba(16, 185, 129, 0.25);
-  border-color: #10b981;
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border-color: #34d399 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.6) !important;
 }
 
 /* Action Controls */
