@@ -17,14 +17,28 @@
   <link rel="stylesheet" href="font-awesome.css">
   
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=4.2">
+  <link rel="stylesheet" href="style.css?v=5.0">
 
   <!-- Immediate Authentication Check: Unauthenticated visitors land on login.html -->
   <script>
     (function() {
       const sessionActive = sessionStorage.getItem("greeneye_session_active");
       const authenticated = sessionStorage.getItem("greeneye_authenticated");
-      const user = localStorage.getItem("greeneye_user");
+      let user = localStorage.getItem("greeneye_user");
+      
+      // Force dummy users to re-authenticate with real Firebase auth
+      if (user) {
+        try {
+          const parsedUser = JSON.parse(user);
+          if (parsedUser.email === "agronomist@gmail.com" || parsedUser.email === "agronomist.research@gmail.com") {
+            localStorage.removeItem("greeneye_user");
+            sessionStorage.removeItem("greeneye_session_active");
+            sessionStorage.removeItem("greeneye_authenticated");
+            user = null;
+          }
+        } catch(e) {}
+      }
+
       if (!sessionActive && !authenticated && !user) {
         window.location.replace("login.html");
       }
@@ -1285,6 +1299,6 @@
   </div>
 
   <!-- Main JavaScript Application Logic (ES Module with Firebase) -->
-  <script type="module" src="app.js?v=4.2"></script>
+  <script type="module" src="app.js?v=5.0"></script>
 </body>
 </html>

@@ -104,6 +104,28 @@ async def get_sample_images(count_per_class: int = 4):
     return samples
 
 
+@app.post("/api/predict")
+async def predict_leaf_image(
+    image: UploadFile = File(...)
+):
+    """
+    Diagnoses a sugarcane leaf image uploaded via multipart/form-data.
+    This fulfills the exact POST /api/predict specification.
+    """
+    if not image or not image.filename:
+        raise HTTPException(status_code=400, detail="No image provided. Please upload an image file.")
+
+    image_bytes = await image.read()
+    
+    if not image_bytes:
+        raise HTTPException(status_code=400, detail="Empty image provided.")
+
+    try:
+        diagnosis = inference_engine.predict(image_bytes)
+        return JSONResponse(content=diagnosis)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Diagnostic pipeline error: {str(e)}")
+
 @app.post("/api/diagnose")
 async def diagnose_leaf_image(
     file: Optional[UploadFile] = File(None),

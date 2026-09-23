@@ -1031,6 +1031,14 @@ function initEventListeners() {
       loadFileObject(e.dataTransfer.files[0]);
     }
   });
+  
+  // Make the entire drop zone clickable for better UX
+  DOM.dropZone.addEventListener("click", (e) => {
+    // Only trigger if they didn't click the browse button itself (to avoid double trigger)
+    if (e.target !== DOM.browseFileBtn && !DOM.browseFileBtn.contains(e.target)) {
+      DOM.leafFileInput.click();
+    }
+  });
 
   // Quick Samples Buttons
   document.querySelectorAll(".sample-btn").forEach(btn => {
@@ -1351,24 +1359,21 @@ async function startDiagnosticPipeline() {
   if (AppState.currentImageSrc) {
     try {
       let response;
+      let imgBlob;
       if (AppState.currentImageSrc.startsWith("data:image")) {
-        response = await fetch(`${API_BASE_URL}/api/diagnose-json`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            image_base64: AppState.currentImageSrc,
-            file_name: AppState.currentFileName || "leaf_scan.jpeg"
-          })
-        });
+        const res = await fetch(AppState.currentImageSrc);
+        imgBlob = await res.blob();
       } else {
-        const imgBlob = await fetch(AppState.currentImageSrc).then(r => r.blob());
-        const formData = new FormData();
-        formData.append("file", imgBlob, AppState.currentFileName || "sample.jpeg");
-        response = await fetch(`${API_BASE_URL}/api/diagnose`, {
-          method: "POST",
-          body: formData
-        });
+        imgBlob = await fetch(AppState.currentImageSrc).then(r => r.blob());
       }
+      
+      const formData = new FormData();
+      formData.append("image", imgBlob, AppState.currentFileName || "capture.jpeg");
+      
+      response = await fetch(`${API_BASE_URL}/api/predict`, {
+        method: "POST",
+        body: formData
+      });
 
       if (response && response.ok) {
         const result = await response.json();

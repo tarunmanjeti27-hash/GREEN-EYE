@@ -534,17 +534,16 @@
         </button>
       </form>
 
-      <!-- 1-Click Demo Login -->
-      <button type="button" class="btn-demo-quick" id="btnQuickDemo">
-        <i class="fa-solid fa-bolt text-yellow"></i> <span id="txtQuickDemo">1-Click Quick Demo Login (Dr. Tarun Kumar / agronomist@gmail.com)</span>
-      </button>
-
-      <!-- Guest Explorer Option -->
-      <div class="guest-link-row">
-        <a href="index.html" id="linkGuestAccess">
-          <i class="fa-solid fa-arrow-right"></i> <span id="txtGuestAccess">Skip for now & browse as Guest</span>
-        </a>
+      <!-- Or Divider -->
+      <div class="login-divider">
+        <span id="lblLoginDivider">OR</span>
       </div>
+
+      <!-- Google Sign In -->
+      <button type="button" class="btn-google" id="btnGoogleSignIn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo" class="google-logo">
+        <span id="txtGoogleSignIn">Continue with Google / Gmail</span>
+      </button>
     </div>
   </main>
 
@@ -763,18 +762,19 @@
       showFeedback("Authenticating with Firebase...", true);
       try {
         const res = await authenticateFirebaseEmail(email, pwd);
-        handleLoginSuccess(email, name);
+        if (res && res.success) {
+          handleLoginSuccess(email, name);
+        } else {
+          let errorMsg = res.error ? res.error.message : "Invalid credentials";
+          if (res.error && res.error.code === "auth/operation-not-allowed") {
+            errorMsg = "ACTION REQUIRED: You must enable 'Email/Password' authentication in your Firebase Console (green-eye-afc2f) under Build -> Authentication -> Sign-in method.";
+            alert("FIREBASE ERROR: " + errorMsg);
+          }
+          showFeedback(errorMsg, false);
+        }
       } catch (err) {
-        handleLoginSuccess(email, name);
+        showFeedback("Authentication error: " + err.message, false);
       }
-    });
-
-    // 1-Click Quick Demo Login
-    document.getElementById("btnQuickDemo").addEventListener("click", () => {
-      document.getElementById("inputName").value = "Dr. Tarun Kumar";
-      document.getElementById("inputEmail").value = "agronomist@gmail.com";
-      document.getElementById("inputPassword").value = "GreenEye2026!";
-      handleLoginSuccess("agronomist@gmail.com", "Dr. Tarun Kumar");
     });
 
     // Optional Google Sign In Handler
@@ -787,20 +787,13 @@
           if (gRes.success && gRes.user) {
             handleLoginSuccess(gRes.user.email, gRes.user.displayName || "Google Agronomist");
           } else {
-            handleLoginSuccess("agronomist.research@gmail.com", "Dr. Tarun Kumar");
+            showFeedback("Google Sign-In failed.", false);
           }
         } catch (e) {
-          handleLoginSuccess("agronomist.research@gmail.com", "Dr. Tarun Kumar");
+          showFeedback("Google Sign-In error: " + e.message, false);
         }
       });
     }
-
-    // Guest link
-    document.getElementById("linkGuestAccess").addEventListener("click", (e) => {
-      e.preventDefault();
-      sessionStorage.setItem("greeneye_session_active", "guest");
-      window.location.href = "index.html";
-    });
 
     // Forgot Password Mock
     document.getElementById("linkForgotPwd").addEventListener("click", (e) => {
