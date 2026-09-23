@@ -718,27 +718,103 @@ function resetImageViewer() {
    Computer Vision & Diagnostic Analysis
    ========================================================================== */
 
-function startDiagnosticPipeline() {
+const API_BASE_URL = window.location.origin;
+
+async function startDiagnosticPipeline() {
   // Show Loading & Laser
   DOM.diagnosisEmptyState.classList.add("hidden");
   DOM.diagnosisResultContent.classList.add("hidden");
   DOM.diagnosisLoadingState.classList.remove("hidden");
   DOM.scannerLaser.classList.remove("hidden");
-  DOM.spectralStatusBadge.textContent = "Scanning Pixels...";
+  DOM.spectralStatusBadge.textContent = "Connecting to Vision Engine...";
 
-  setTimeout(() => {
-    runPixelSpectralAnalysis();
-    DOM.scannerLaser.classList.add("hidden");
-    DOM.diagnosisLoadingState.classList.add("hidden");
-    DOM.diagnosisResultContent.classList.remove("hidden");
-    DOM.spectralStatusBadge.textContent = "Analysis Complete";
+  let backendSuccess = false;
 
-    if (AppState.soundEnabled && AppState.analysisData) {
-      const top = AppState.analysisData.topClass;
-      const conf = AppState.analysisData.confidence;
-      speakText(`GREEN-EYE: ${DISEASE_KNOWLEDGE[top].title} diagnosed with ${conf}% confidence.`);
+  // Attempt FastAPI backend diagnosis if running over HTTP/HTTPS
+  if (AppState.currentImageSrc && window.location.protocol.startsWith("http")) {
+    try {
+      let response;
+      if (AppState.currentImageSrc.startsWith("data:image")) {
+        response = await fetch(`${API_BASE_URL}/api/diagnose-json`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            image_base64: AppState.currentImageSrc,
+            file_name: AppState.currentFileName || "leaf_scan.jpeg"
+          })
+        });
+      } else {
+        const imgBlob = await fetch(AppState.currentImageSrc).then(r => r.blob());
+        const formData = new FormData();
+        formData.append("file", imgBlob, AppState.currentFileName || "sample.jpeg");
+        response = await fetch(`${API_BASE_URL}/api/diagnose`, {
+          method: "POST",
+          body: formData
+        });
+      }
+
+      if (response && response.ok) {
+        const result = await response.json();
+        applyBackendDiagnosis(result);
+        backendSuccess = true;
+      }
+    } catch (err) {
+      console.log("[GREEN-EYE] Backend notice, falling back to local vision pipeline:", err);
     }
-  }, 750);
+  }
+
+  // Graceful fallback to client-side spectral computer vision
+  if (!backendSuccess) {
+    runPixelSpectralAnalysis();
+  }
+
+  DOM.scannerLaser.classList.add("hidden");
+  DOM.diagnosisLoadingState.classList.add("hidden");
+  DOM.diagnosisResultContent.classList.remove("hidden");
+  DOM.spectralStatusBadge.textContent = "Analysis Complete";
+
+  if (AppState.soundEnabled && AppState.analysisData) {
+    const top = AppState.analysisData.topClass;
+    const conf = AppState.analysisData.confidence;
+    speakText(`GREEN-EYE: ${DISEASE_KNOWLEDGE[top].title} diagnosed with ${conf}% confidence.`);
+  }
+}
+
+function applyBackendDiagnosis(result) {
+  const topClass = result.top_class;
+  const confidence = result.confidence;
+  const probs = result.probabilities;
+  const spectral = result.spectral_metrics;
+
+  // Update spectral metric progress bars
+  DOM.metricGreen.style.width = `${spectral.green_vigor}%`;
+  DOM.metricGreenVal.textContent = `${spectral.green_vigor}%`;
+  DOM.metricRed.style.width = `${spectral.red_lesion}%`;
+  DOM.metricRedVal.textContent = `${spectral.red_lesion}%`;
+  DOM.metricYellow.style.width = `${spectral.yellow_chlorosis}%`;
+  DOM.metricYellowVal.textContent = `${spectral.yellow_chlorosis}%`;
+  DOM.metricTexture.style.width = `${spectral.texture_disruption}%`;
+  DOM.metricTextureVal.textContent = `${spectral.texture_disruption}%`;
+
+  AppState.analysisData = {
+    probs,
+    topClass,
+    confidence,
+    greenPct: spectral.green_vigor,
+    redPct: spectral.red_lesion,
+    yellowPct: spectral.yellow_chlorosis,
+    texturePct: spectral.texture_disruption,
+    engine: result.engine
+  };
+
+  renderDiagnosticVerdict(topClass, confidence, probs);
+
+  if (result.engine && result.engine.latency_ms) {
+    DOM.verdictClassBadge.title = `Diagnosed by ${result.engine.model_type} in ${result.engine.latency_ms}ms`;
+  }
+
+  // Live Cloud Firestore Synchronization (Collection: diagnostic_scans)
+  syncScanToFirestore(topClass, confidence, spectral.green_vigor, spectral.red_lesion, spectral.yellow_chlorosis, spectral.texture_disruption);
 }
 
 function runPixelSpectralAnalysis() {
