@@ -2506,3 +2506,54 @@ function closeCloudHistoryModal() {
     DOM.cloudHistoryModalBackdrop.classList.add("hidden");
   }
 }
+
+/**
+ * Initialize Authentication Header, Profile Badge & Session Sync
+ */
+function initAuthHeader() {
+  const savedUser = localStorage.getItem("greeneye_user");
+  const isAuth = sessionStorage.getItem("greeneye_authenticated") === "true" || sessionStorage.getItem("greeneye_session_active") === "true";
+  
+  if (savedUser || isAuth) {
+    let email = "agronomist@green-eye.app";
+    let name = "Agronomist";
+    try {
+      if (savedUser) {
+        const u = JSON.parse(savedUser);
+        name = u.name || name;
+        email = u.email || email;
+      }
+    } catch(e) {}
+    
+    if (DOM.openLoginBtn) DOM.openLoginBtn.classList.add("hidden");
+    if (DOM.userProfileBadge) DOM.userProfileBadge.classList.remove("hidden");
+    if (DOM.headerUserEmail) DOM.headerUserEmail.textContent = name || email;
+    if (DOM.footerAuthStatus) DOM.footerAuthStatus.textContent = `Status: Authenticated (${name} • ${email})`;
+  } else {
+    if (DOM.openLoginBtn) DOM.openLoginBtn.classList.remove("hidden");
+    if (DOM.userProfileBadge) DOM.userProfileBadge.classList.add("hidden");
+    if (DOM.footerAuthStatus) DOM.footerAuthStatus.textContent = "Status: Guest Mode (Click 'Sign In' for Cloud Sync)";
+  }
+
+  if (DOM.openLoginBtn) {
+    DOM.openLoginBtn.onclick = () => {
+      window.location.href = "login.html";
+    };
+  }
+
+  if (DOM.headerLogoutBtn) {
+    DOM.headerLogoutBtn.onclick = () => {
+      localStorage.removeItem("greeneye_user");
+      sessionStorage.removeItem("greeneye_authenticated");
+      sessionStorage.removeItem("greeneye_session_active");
+      try { signOutFirebase(); } catch(e) {}
+      showToast("Signed out. Switched to Guest Mode.", true);
+      initAuthHeader();
+    };
+  }
+}
+
+// Initialize Auth & Navigation
+initAuthHeader();
+setupSmoothScrolling();
+
