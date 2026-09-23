@@ -736,6 +736,7 @@ if (document.readyState === "loading") {
 
 function initAuthSession() {
   const sessionActive = sessionStorage.getItem("greeneye_session_active");
+  const authenticated = sessionStorage.getItem("greeneye_authenticated");
   const savedUser = localStorage.getItem("greeneye_user");
   if (savedUser) {
     try {
@@ -752,13 +753,17 @@ function initAuthSession() {
   }
 
   // Display Starting Login Gate on initial load if not yet authenticated in this session
-  if (sessionActive === "true" && AppState.currentUser) {
+  if ((sessionActive === "true" || authenticated === "true") && AppState.currentUser) {
     applyLoggedInUI(AppState.currentUser);
-  } else {
+  } else if (sessionActive === "guest") {
     applyLoggedOutUI();
     if (DOM.startingLoginGate) {
-      DOM.startingLoginGate.classList.remove("hidden");
+      DOM.startingLoginGate.classList.add("hidden");
     }
+  } else {
+    // Unauthenticated user -> redirect to dedicated login page
+    window.location.replace("login.html");
+    return;
   }
 
   // Real-time Firebase Auth listener
@@ -772,6 +777,7 @@ function initAuthSession() {
         };
         AppState.currentUser = userObj;
         sessionStorage.setItem("greeneye_session_active", "true");
+        sessionStorage.setItem("greeneye_authenticated", "true");
         localStorage.setItem("greeneye_user", JSON.stringify(userObj));
         applyLoggedInUI(userObj);
       }
@@ -821,11 +827,7 @@ function showToast(message, isSuccess = true) {
 function initEventListeners() {
   // Authentication & Login Modal
   DOM.openLoginBtn.addEventListener("click", () => {
-    if (DOM.startingLoginGate) {
-      DOM.startingLoginGate.classList.remove("hidden");
-    }
-    hideLoginFeedback();
-    if (DOM.loginEmailInput) DOM.loginEmailInput.focus();
+    window.location.href = "login.html";
   });
 
   DOM.closeLoginModalBtn.addEventListener("click", () => {
@@ -912,12 +914,9 @@ function initEventListeners() {
     } catch (e) {}
     AppState.currentUser = null;
     sessionStorage.removeItem("greeneye_session_active");
+    sessionStorage.removeItem("greeneye_authenticated");
     localStorage.removeItem("greeneye_user");
-    applyLoggedOutUI();
-    if (DOM.startingLoginGate) {
-      DOM.startingLoginGate.classList.remove("hidden");
-    }
-    showToast("Signed out from GREEN-EYE.");
+    window.location.href = "login.html";
   });
 
   // Forgot password mock

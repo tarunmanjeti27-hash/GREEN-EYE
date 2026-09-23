@@ -17,7 +17,19 @@
   <link rel="stylesheet" href="font-awesome.css">
   
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=3.9">
+  <link rel="stylesheet" href="style.css?v=4.0">
+
+  <!-- Immediate Authentication Check: Unauthenticated visitors land on login.html -->
+  <script>
+    (function() {
+      const sessionActive = sessionStorage.getItem("greeneye_session_active");
+      const authenticated = sessionStorage.getItem("greeneye_authenticated");
+      const user = localStorage.getItem("greeneye_user");
+      if (!sessionActive && !authenticated && !user) {
+        window.location.replace("login.html");
+      }
+    })();
+  </script>
 </head>
 <body>
 
@@ -1362,6 +1374,6 @@
   </div>
 
   <!-- Main JavaScript Application Logic (ES Module with Firebase) -->
-  <script type="module" src="app.js?v=3.9"></script>
+  <script type="module" src="app.js?v=4.0"></script>
 </body>
 </html>

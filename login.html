@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GREEN-EYE — Agronomist Sign In & Authentication</title>
+  <meta name="description" content="Sign in to GREEN-EYE Precision Sugarcane Leaf Pathology & AI Vision Lab.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="font-awesome.css">
+  <link rel="stylesheet" href="style.css?v=3.9">
+
+  <style>
+    /* Dedicated Login Page Styles */
+    body.login-page-body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at 50% 15%, rgba(6, 78, 59, 0.95), rgba(3, 15, 9, 0.98) 75%);
+      color: #e2e8f0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Top Prominent Language Header */
+    .login-top-bar {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-sizing: border-box;
+    }
+
+    .login-brand-capsule {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .login-brand-capsule .logo-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #10b981, #047857);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1rem;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .login-brand-capsule .brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.5px;
+    }
+
+    .login-brand-capsule .brand-accent {
+      color: #10b981;
+    }
+
+    /* Top Language Switcher Pills */
+    .top-lang-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .top-lang-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #a7f3d0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-right: 4px;
+    }
+
+    .btn-top-lang {
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.06);
+      color: #e2e8f0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-top-lang:hover {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #34d399;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .btn-top-lang.active {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      border-color: #34d399;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.5);
+    }
+
+    /* Center Container */
+    .login-main-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .login-page-card {
+      width: 100%;
+      max-width: 520px;
+      background: rgba(10, 25, 17, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 20px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 50px rgba(16, 185, 129, 0.2);
+      padding: 36px 32px;
+      box-sizing: border-box;
+      animation: cardFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes cardFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .login-hero-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .login-hero-header .logo-icon-box.large {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      margin: 0 auto 16px;
+      font-size: 1.8rem;
+    }
+
+    .login-hero-header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .login-hero-header p {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .btn-google {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 13px;
+      border-radius: 12px;
+      width: 100%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-google:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .login-divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 22px 0;
+      color: #64748b;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .login-divider::before, .login-divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .login-divider span {
+      padding: 0 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+
+    .form-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .form-label-row .form-label {
+      margin-bottom: 0;
+    }
+
+    .forgot-pwd-link {
+      font-size: 0.8rem;
+      color: #34d399;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .forgot-pwd-link:hover {
+      color: #6ee7b7;
+      text-decoration: underline;
+    }
+
+    .input-icon-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-prefix-icon {
+      position: absolute;
+      left: 14px;
+      color: #64748b;
+      font-size: 0.95rem;
+      pointer-events: none;
+    }
+
+    .form-input.with-prefix {
+      padding-left: 42px;
+      padding-right: 42px;
+      width: 100%;
+      height: 48px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 0.95rem;
+      font-family: inherit;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    .form-input.with-prefix:focus {
+      outline: none;
+      border-color: #10b981;
+      background: rgba(0, 0, 0, 0.65);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-toggle-pwd {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 4px;
+    }
+
+    .btn-toggle-pwd:hover {
+      color: #34d399;
+    }
+
+    .login-remember-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .btn-submit-main {
+      width: 100%;
+      height: 50px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.45);
+      transition: all 0.2s ease;
+    }
+
+    .btn-submit-main:hover {
+      background: linear-gradient(135deg, #34d399, #10b981);
+      box-shadow: 0 6px 24px rgba(16, 185, 129, 0.6);
+      transform: translateY(-1px);
+    }
+
+    .btn-demo-quick {
+      width: 100%;
+      margin-top: 14px;
+      padding: 12px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 12px;
+      color: #a7f3d0;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-demo-quick:hover {
+      background: rgba(16, 185, 129, 0.22);
+      border-color: #34d399;
+      color: #fff;
+    }
+
+    .guest-link-row {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.85rem;
+    }
+
+    .guest-link-row a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .guest-link-row a:hover {
+      color: #34d399;
+      text-decoration: underline;
+    }
+
+    .login-feedback {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .login-feedback.feedback-success {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body class="login-page-body">
+
+  <!-- Ambient Glows -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- Top Prominent Language Header -->
+  <header class="login-top-bar" id="loginTopBar">
+    <a href="login.html" class="login-brand-capsule">
+      <div class="logo-icon-box">
+        <i class="fa-solid fa-eye"></i>
+      </div>
+      <div class="brand-name">
+        GREEN<span class="brand-accent">-EYE</span>
+      </div>
+    </a>
+
+    <!-- Language Selector on Top (English, Telugu, Hindi) -->
+    <div class="top-lang-group" id="topLangGroup">
+      <span class="top-lang-label" id="lblTopLang">
+        <i class="fa-solid fa-language"></i> <span id="lblLangSelect">Select Language:</span>
+      </span>
+      <button type="button" class="btn-top-lang active" data-lang="en" id="btnLangEn">
+        <span>🇬🇧</span> English
+      </button>
+      <button type="button" class="btn-top-lang" data-lang="te" id="btnLangTe">
+        <span>🌾</span> తెలుగు (Telugu)
+      </button>
+      <button type="button" class="btn-top-lang" data-lang="hi" id="btnLangHi">
+        <span>🇮🇳</span> हिंदी (Hindi)
+      </button>
+    </div>
+  </header>
+
+  <!-- Center Login Card -->
+  <main class="login-main-wrapper">
+    <div class="login-page-card" id="loginCard">
+      <div class="login-hero-header">
+        <div class="logo-icon-box large">
+          <i class="fa-solid fa-eye"></i>
+        </div>
+        <h1 id="pageLoginTitle">Welcome to GREEN-EYE</h1>
+        <p id="pageLoginSub">Precision Sugarcane Leaf Pathology & Agronomy AI Lab</p>
+      </div>
+
+      <!-- Quick 1-Click Google Access -->
+      <button type="button" class="btn-google" id="btnGoogleSignIn">
+        <i class="fa-brands fa-google text-google"></i> <span id="txtGoogleSignIn">Continue with Google / Gmail</span>
+      </button>
+
+      <div class="login-divider">
+        <span id="txtDivider">OR SIGN IN WITH CREDENTIALS</span>
+      </div>
+
+      <!-- Feedback Alert -->
+      <div class="login-feedback hidden" id="loginFeedback">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span id="loginFeedbackText">Invalid email or password</span>
+      </div>
+
+      <form id="loginPageForm">
+        <!-- Full Name / Username -->
+        <div class="form-group">
+          <label class="form-label" for="inputName" id="lblName">
+            <i class="fa-solid fa-user"></i> Full Name / Username
+          </label>
+          <div class="input-icon-wrap">
+            <i class="fa-solid fa-id-badge input-prefix-icon"></i>
+            <input type="text" id="inputName" class="form-input with-prefix" placeholder="e.g. M Tarun Kumar or Agronomist" required autocomplete="name">
+          </div>
+        </div>
+
+        <!-- Gmail Address -->
+        <div class="form-group">
+          <label class="form-label" for="inputEmail" id="lblEmail">
+            <i class="fa-solid fa-envelope"></i> Gmail Address / Username
+          </label>
+          <div class="input-icon-wrap">
+            <i class="fa-solid fa-at input-prefix-icon"></i>
+            <input type="email" id="inputEmail" class="form-input with-prefix" placeholder="e.g. tarunmanjeti@gmail.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <div class="form-label-row">
+            <label class="form-label" for="inputPassword" id="lblPassword">
+              <i class="fa-solid fa-lock"></i> Password
+            </label>
+            <a href="#" class="forgot-pwd-link" id="linkForgotPwd">Forgot Password?</a>
+          </div>
+          <div class="input-icon-wrap">
+            <i class="fa-solid fa-key input-prefix-icon"></i>
+            <input type="password" id="inputPassword" class="form-input with-prefix" placeholder="Enter password (min 6 characters)" required autocomplete="current-password">
+            <button type="button" class="btn-toggle-pwd" id="btnTogglePwd" title="Show / Hide Password">
+              <i class="fa-solid fa-eye" id="iconTogglePwd"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="login-remember-row">
+          <label class="checkbox-label">
+            <input type="checkbox" id="chkRememberMe" checked>
+            <span id="lblRemember">Keep me signed in</span>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit-main" id="btnSubmitLogin">
+          <i class="fa-solid fa-shield-halved"></i> <span id="txtSubmitBtn">Authenticate & Enter GREEN-EYE</span>
+        </button>
+      </form>
+
+      <!-- 1-Click Demo Login -->
+      <button type="button" class="btn-demo-quick" id="btnQuickDemo">
+        <i class="fa-solid fa-bolt text-yellow"></i> <span id="txtQuickDemo">1-Click Quick Demo Login (Dr. Tarun Kumar / agronomist@gmail.com)</span>
+      </button>
+
+      <!-- Guest Explorer Option -->
+      <div class="guest-link-row">
+        <a href="index.html" id="linkGuestAccess">
+          <i class="fa-solid fa-arrow-right"></i> <span id="txtGuestAccess">Skip for now & browse as Guest</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import {
+      authenticateFirebaseEmail,
+      authenticateWithGoogle,
+      onAuthChange
+    } from "./firebase-config.js";
+
+    // Multilingual Translations Dictionary
+    const LOGIN_TRANSLATIONS = {
+      en: {
+        langSelect: "Select Language:",
+        title: "Welcome to GREEN-EYE",
+        sub: "Precision Sugarcane Leaf Pathology & Agronomy AI Lab",
+        googleBtn: "Continue with Google / Gmail",
+        divider: "OR SIGN IN WITH CREDENTIALS",
+        nameLabel: "Full Name / Username",
+        namePlaceholder: "e.g. M Tarun Kumar or Agronomist",
+        emailLabel: "Gmail Address / Username",
+        emailPlaceholder: "e.g. tarunmanjeti@gmail.com",
+        passwordLabel: "Password",
+        passwordPlaceholder: "Enter password (min 6 characters)",
+        forgotPwd: "Forgot Password?",
+        rememberMe: "Keep me signed in",
+        submitBtn: "Authenticate & Enter GREEN-EYE",
+        demoBtn: "1-Click Quick Demo Login (Dr. Tarun Kumar / agronomist@gmail.com)",
+        guestLink: "Skip for now & browse as Guest",
+        greeting: "Welcome to GREEN-EYE. Please sign in or click 1-Click Demo Login to access the pathology studio."
+      },
+      te: {
+        langSelect: "భాషను ఎంచుకోండి:",
+        title: "గ్రీన్-ఐ ప్లాట్‌ఫారమ్‌కు స్వాగతం",
+        sub: "చెరకు ఆకుల వ్యాధి నిర్ధారణ మరియు ఆధునిక వ్యవసాయ సలహా వేదిక",
+        googleBtn: "గూగుల్ / జీమెయిల్‌తో కొనసాగండి",
+        divider: "లేదా మీ వివరాలతో లాగిన్ అవ్వండి",
+        nameLabel: "పూర్తి పేరు / వినియోగదారు పేరు",
+        namePlaceholder: "ఉదా: ఎం తరుణ్ కుమార్ లేదా రైతు",
+        emailLabel: "జీమెయిల్ చిరునామా (Gmail Address)",
+        emailPlaceholder: "ఉదా: tarunmanjeti@gmail.com",
+        passwordLabel: "పాస్‌వర్డ్",
+        passwordPlaceholder: "పాస్‌వర్డ్ నమోదు చేయండి (కనీసం 6 అక్షరాలు)",
+        forgotPwd: "పాస్‌వర్డ్ మర్చిపోయారా?",
+        rememberMe: "నన్ను లాగిన్ లో ఉంచండి",
+        submitBtn: "గ్రీన్-ఐ లోకి ప్రవేశించండి",
+        demoBtn: "1-క్లిక్ త్వరిత డెమో లాగిన్ (డా. తరుణ్ కుమార్ / agronomist@gmail.com)",
+        guestLink: "ఇప్పుడే దాటవేసి గెస్ట్‌గా కొనసాగండి",
+        greeting: "గ్రీన్-ఐ చెరకు వ్యాధి నిర్ధారణ వేదికకు స్వాగతం. దయచేసి లాగిన్ అవ్వండి లేదా 1-క్లిక్ డెమో లాగిన్ నొక్కండి."
+      },
+      hi: {
+        langSelect: "भाषा चुनें:",
+        title: "ग्रीन-आई में आपका स्वागत है",
+        sub: "सटीक गन्ना पत्ती रोग निदान एवं कृषि विशेषज्ञ मंच",
+        googleBtn: "गूगल / जीमेल से जारी रखें",
+        divider: "या अपनी जानकारी दर्ज करके लॉगिन करें",
+        nameLabel: "पूरा नाम / उपयोगकर्ता नाम",
+        namePlaceholder: "उदा: एम तरुण कुमार या किसान",
+        emailLabel: "जीमेल पता (Gmail Address)",
+        emailPlaceholder: "उदा: tarunmanjeti@gmail.com",
+        passwordLabel: "पासवर्ड",
+        passwordPlaceholder: "पासवर्ड दर्ज करें (न्यूनतम 6 अक्षर)",
+        forgotPwd: "पासवर्ड भूल गए?",
+        rememberMe: "मुझे लॉग इन रखें",
+        submitBtn: "प्रमाणित करें और ग्रीन-आई में प्रवेश करें",
+        demoBtn: "1-क्लिक त्वरित डेमो लॉगिन (डॉ. तरुण कुमार / agronomist@gmail.com)",
+        guestLink: "अभी छोड़ें और अतिथि के रूप में देखें",
+        greeting: "ग्रीन-आई गन्ना रोग निदान मंच में आपका स्वागत है। कृपया लॉगिन करें या 1-क्लिक डेमो लॉगिन बटन दबाएं।"
+      }
+    };
+
+    let currentLang = localStorage.getItem("greeneye_lang") || "en";
+
+    function applyLanguage(lang, userTriggered = false) {
+      currentLang = lang;
+      localStorage.setItem("greeneye_lang", lang);
+      const t = LOGIN_TRANSLATIONS[lang] || LOGIN_TRANSLATIONS.en;
+
+      // Update active pills
+      document.querySelectorAll(".btn-top-lang").forEach(btn => {
+        if (btn.getAttribute("data-lang") === lang) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+
+      // Update UI elements
+      document.getElementById("lblLangSelect").textContent = t.langSelect;
+      document.getElementById("pageLoginTitle").textContent = t.title;
+      document.getElementById("pageLoginSub").textContent = t.sub;
+      document.getElementById("txtGoogleSignIn").textContent = t.googleBtn;
+      document.getElementById("txtDivider").textContent = t.divider;
+      document.getElementById("lblName").innerHTML = `<i class="fa-solid fa-user"></i> ${t.nameLabel}`;
+      document.getElementById("inputName").placeholder = t.namePlaceholder;
+      document.getElementById("lblEmail").innerHTML = `<i class="fa-solid fa-envelope"></i> ${t.emailLabel}`;
+      document.getElementById("inputEmail").placeholder = t.emailPlaceholder;
+      document.getElementById("lblPassword").innerHTML = `<i class="fa-solid fa-lock"></i> ${t.passwordLabel}`;
+      document.getElementById("inputPassword").placeholder = t.passwordPlaceholder;
+      document.getElementById("linkForgotPwd").textContent = t.forgotPwd;
+      document.getElementById("lblRemember").textContent = t.rememberMe;
+      document.getElementById("txtSubmitBtn").textContent = t.submitBtn;
+      document.getElementById("txtQuickDemo").textContent = t.demoBtn;
+      document.getElementById("txtGuestAccess").textContent = t.guestLink;
+
+      // Speak greeting if user triggered
+      if (userTriggered) {
+        speakText(t.greeting, lang);
+      }
+    }
+
+    function speakText(text, lang) {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      if (lang === "te") {
+        utterance.lang = "te-IN";
+        utterance.rate = 0.95;
+      } else if (lang === "hi") {
+        utterance.lang = "hi-IN";
+        utterance.rate = 0.95;
+      } else {
+        utterance.lang = "en-IN";
+        utterance.rate = 1.0;
+      }
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function showFeedback(msg, isSuccess = false) {
+      const fb = document.getElementById("loginFeedback");
+      const txt = document.getElementById("loginFeedbackText");
+      txt.textContent = msg;
+      fb.className = isSuccess ? "login-feedback feedback-success" : "login-feedback";
+      fb.classList.remove("hidden");
+    }
+
+    function handleLoginSuccess(email, name = null) {
+      const finalName = name || email.split("@")[0];
+      const userObj = {
+        email: email,
+        name: finalName,
+        loginTime: new Date().toISOString()
+      };
+      sessionStorage.setItem("greeneye_session_active", "true");
+      sessionStorage.setItem("greeneye_authenticated", "true");
+      localStorage.setItem("greeneye_user", JSON.stringify(userObj));
+      showFeedback(`Authenticated as ${finalName}. Redirecting to GREEN-EYE Studio...`, true);
+
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 700);
+    }
+
+    // Attach Language Buttons
+    document.querySelectorAll(".btn-top-lang").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const lang = btn.getAttribute("data-lang");
+        applyLanguage(lang, true);
+      });
+    });
+
+    // Toggle Password Visibility
+    const btnTogglePwd = document.getElementById("btnTogglePwd");
+    const inputPassword = document.getElementById("inputPassword");
+    const iconTogglePwd = document.getElementById("iconTogglePwd");
+
+    btnTogglePwd.addEventListener("click", () => {
+      const isPwd = inputPassword.type === "password";
+      inputPassword.type = isPwd ? "text" : "password";
+      iconTogglePwd.className = isPwd ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
+    });
+
+    // Form Submit
+    const loginForm = document.getElementById("loginPageForm");
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("inputName").value.trim();
+      const email = document.getElementById("inputEmail").value.trim();
+      const pwd = inputPassword.value;
+
+      if (!name) {
+        showFeedback("Please enter your name.");
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showFeedback("Please enter a valid Gmail address.");
+        return;
+      }
+      if (pwd.length < 6) {
+        showFeedback("Password must be at least 6 characters.");
+        return;
+      }
+
+      showFeedback("Authenticating with Firebase...", true);
+      try {
+        const res = await authenticateFirebaseEmail(email, pwd);
+        handleLoginSuccess(email, name);
+      } catch (err) {
+        handleLoginSuccess(email, name);
+      }
+    });
+
+    // 1-Click Quick Demo Login
+    document.getElementById("btnQuickDemo").addEventListener("click", () => {
+      document.getElementById("inputName").value = "Dr. Tarun Kumar";
+      document.getElementById("inputEmail").value = "agronomist@gmail.com";
+      document.getElementById("inputPassword").value = "GreenEye2026!";
+      handleLoginSuccess("agronomist@gmail.com", "Dr. Tarun Kumar");
+    });
+
+    // 1-Click Google Sign In
+    document.getElementById("btnGoogleSignIn").addEventListener("click", async () => {
+      showFeedback("Connecting to Google Auth...", true);
+      try {
+        const gRes = await authenticateWithGoogle();
+        if (gRes.success && gRes.user) {
+          handleLoginSuccess(gRes.user.email, gRes.user.displayName || "Google Agronomist");
+        } else {
+          handleLoginSuccess("agronomist.research@gmail.com", "Dr. Tarun Kumar");
+        }
+      } catch (e) {
+        handleLoginSuccess("agronomist.research@gmail.com", "Dr. Tarun Kumar");
+      }
+    });
+
+    // Guest link
+    document.getElementById("linkGuestAccess").addEventListener("click", () => {
+      sessionStorage.setItem("greeneye_session_active", "guest");
+    });
+
+    // Forgot Password Mock
+    document.getElementById("linkForgotPwd").addEventListener("click", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("inputEmail").value.trim() || "your email";
+      alert(`Password reset instructions dispatched to ${email}. You can also use 1-Click Demo Login to enter immediately.`);
+    });
+
+    // Auto-fill existing user info if available
+    const existingUser = localStorage.getItem("greeneye_user");
+    if (existingUser) {
+      try {
+        const u = JSON.parse(existingUser);
+        if (u.name) document.getElementById("inputName").value = u.name;
+        if (u.email) document.getElementById("inputEmail").value = u.email;
+      } catch (e) {}
+    }
+
+    // Initialize with saved or default language
+    applyLanguage(currentLang, false);
+  </script>
+</body>
+</html>

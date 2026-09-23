@@ -7,7 +7,7 @@ import random
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from pydantic import BaseModel, Field
 
 from backend.config import BASE_DIR, CLASSES, DISEASE_KNOWLEDGE
@@ -255,6 +255,21 @@ for cls_folder in CLASSES:
     folder_path = BASE_DIR / cls_folder
     if folder_path.exists():
         app.mount(f"/{cls_folder}", StaticFiles(directory=str(folder_path)), name=cls_folder)
+
+# Serve login.html for authentication
+@app.get("/login")
+async def serve_login():
+    login_file = BASE_DIR / "login.html"
+    if login_file.exists():
+        return FileResponse(str(login_file))
+    return RedirectResponse(url="/")
+
+@app.get("/login.html")
+async def serve_login_html():
+    login_file = BASE_DIR / "login.html"
+    if login_file.exists():
+        return FileResponse(str(login_file))
+    return RedirectResponse(url="/")
 
 # Serve index.html at root
 @app.get("/")
