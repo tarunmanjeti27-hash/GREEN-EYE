@@ -112,11 +112,32 @@ const AppState = {
   activeOverlayMode: "original", // original, heatmap, mask, edge
   galleryFilter: "all",
   gallerySearchQuery: "",
-  currentUser: null // { email: 'agronomist@gmail.com', name: 'Agronomist' }
+  currentUser: null, // { email: 'agronomist@gmail.com', name: 'Agronomist' }
+  voiceLanguage: "en", // 'en' = English, 'te' = Telugu, 'hi' = Hindi
+  isSpeaking: false
 };
 
 // DOM References
 const DOM = {
+  // Multilingual AI Agronomist Voice Bar
+  voiceAgentBar: document.getElementById("voiceAgentBar"),
+  voiceAvatarBox: document.getElementById("voiceAvatarBox"),
+  voiceCurrentLangBadge: document.getElementById("voiceCurrentLangBadge"),
+  voiceSubTitleText: document.getElementById("voiceSubTitleText"),
+  voiceWaveform: document.getElementById("voiceWaveform"),
+  voiceLangSwitcher: document.getElementById("voiceLangSwitcher"),
+  langBtnEn: document.getElementById("langBtnEn"),
+  langBtnTe: document.getElementById("langBtnTe"),
+  langBtnHi: document.getElementById("langBtnHi"),
+  voiceExplainBtn: document.getElementById("voiceExplainBtn"),
+  voiceExplainBtnText: document.getElementById("voiceExplainBtnText"),
+  voiceStopBtn: document.getElementById("voiceStopBtn"),
+  voiceStopBtnText: document.getElementById("voiceStopBtnText"),
+  voiceSubtitleText: document.getElementById("voiceSubtitleText"),
+  voiceSubtitleStrip: document.getElementById("voiceSubtitleStrip"),
+  speakDiagnosisBtn: document.getElementById("speakDiagnosisBtn"),
+  speakDosageBtn: document.getElementById("speakDosageBtn"),
+
   // Navigation & Header
   header: document.getElementById("mainHeader"),
   themeToggleBtn: document.getElementById("themeToggleBtn"),
@@ -439,6 +460,29 @@ function initEventListeners() {
     const email = DOM.loginEmailInput.value.trim() || "your email";
     alert(`Password reset instructions have been dispatched to ${email}. (You may also use the 1-Click Demo Login to enter instantly).`);
   });
+
+  // Multilingual AI Voice Agent Controls (Telugu, Hindi, English)
+  if (DOM.langBtnEn) {
+    DOM.langBtnEn.addEventListener("click", () => setVoiceLanguage("en"));
+  }
+  if (DOM.langBtnTe) {
+    DOM.langBtnTe.addEventListener("click", () => setVoiceLanguage("te"));
+  }
+  if (DOM.langBtnHi) {
+    DOM.langBtnHi.addEventListener("click", () => setVoiceLanguage("hi"));
+  }
+  if (DOM.voiceExplainBtn) {
+    DOM.voiceExplainBtn.addEventListener("click", () => explainScreen(AppState.voiceLanguage));
+  }
+  if (DOM.voiceStopBtn) {
+    DOM.voiceStopBtn.addEventListener("click", stopSpeech);
+  }
+  if (DOM.speakDiagnosisBtn) {
+    DOM.speakDiagnosisBtn.addEventListener("click", () => explainCurrentDiagnosis(AppState.voiceLanguage));
+  }
+  if (DOM.speakDosageBtn) {
+    DOM.speakDosageBtn.addEventListener("click", () => explainDosagePlan(AppState.voiceLanguage));
+  }
 
   // Browse File Button
   DOM.browseFileBtn.addEventListener("click", () => DOM.leafFileInput.click());
@@ -774,9 +818,7 @@ async function startDiagnosticPipeline() {
   DOM.spectralStatusBadge.textContent = "Analysis Complete";
 
   if (AppState.soundEnabled && AppState.analysisData) {
-    const top = AppState.analysisData.topClass;
-    const conf = AppState.analysisData.confidence;
-    speakText(`GREEN-EYE: ${DISEASE_KNOWLEDGE[top].title} diagnosed with ${conf}% confidence.`);
+    explainCurrentDiagnosis(AppState.voiceLanguage);
   }
 }
 
@@ -1250,16 +1292,273 @@ function closeReportModal() {
 }
 
 /* ==========================================================================
-   Speech Synthesis
+   Multilingual Speech Synthesis & AI Agronomist Voice Assistant
+   Supported Locales: Telugu (te-IN), Hindi (hi-IN), English (en-IN/en-US)
    ========================================================================== */
 
+const MULTILINGUAL_AGRONOMY_DATA = {
+  en: {
+    name: "English",
+    label: "EN (English)",
+    agentTitle: "AI Agronomist Voice Agent",
+    subTitle: "Explaining Sugarcane Pathology, Field Scans & Dosage in Real-Time",
+    explainBtn: "Explain Screen",
+    stopBtn: "Stop",
+    greeting: "Hello! GREEN-EYE AI Agronomist Voice Assistant is ready to assist you in English.",
+    screenOverview: "You are currently viewing the GREEN-EYE precision sugarcane pathology platform. You can upload leaf images or select benchmark samples to diagnose Red Rot, Rust, Yellow Leaf, or Mosaic disease, and calculate field treatment dosage.",
+    Healthy: {
+      name: "Healthy Sugarcane Foliage",
+      speech: "GREEN-EYE Diagnosis: Healthy Sugarcane Foliage detected with high photosynthetic vigor. No corrective chemical fungicides required. Maintain regular canopy monitoring and organic nourishment."
+    },
+    RedRot: {
+      name: "Sugarcane Red Rot Disease",
+      speech: "GREEN-EYE Alert: Sugarcane Red Rot Disease diagnosed. Caused by Colletotrichum falcatum. Immediately rogue out and incinerate infected clumps. Apply Carbendazim 50% WP at 2 grams per liter of water directly over the canopy."
+    },
+    Rust: {
+      name: "Sugarcane Leaf Rust",
+      speech: "GREEN-EYE Diagnosis: Sugarcane Leaf Rust detected with uredinial pustules. Detrash lower infected leaves to improve ventilation. Spray protective fungicide Mancozeb 75% WP at 2.5 grams per liter."
+    },
+    Yellow: {
+      name: "Sugarcane Yellow Leaf Disease",
+      speech: "GREEN-EYE Diagnosis: Sugarcane Yellow Leaf Disease identified. Caused by SCYLV virus. Target the aphid vector with Thiamethoxam 25% WG at 0.3 grams per liter or neem oil bio-repellent."
+    },
+    Mosaic: {
+      name: "Sugarcane Mosaic Virus",
+      speech: "GREEN-EYE Diagnosis: Sugarcane Mosaic Virus identified. Characterized by foliar chlorotic mottling. Rogue out stunted clumps and control vector aphids with Acetamiprid 20% SP."
+    },
+    dosage: (area, unit, disease, water, chem) => `Treatment Plan for ${area} ${unit} affected by ${disease}: Mix ${chem} in ${water} liters of water per spray round. Ensure thorough foliar coverage.`
+  },
+  te: {
+    name: "తెలుగు",
+    label: "తెలుగు (Telugu)",
+    agentTitle: "AI వ్యవసాయ వాయిస్ అసిస్టెంట్",
+    subTitle: "చెరకు తెగుళ్ళు, స్కాన్ ఫలితాలు మరియు మందుల మోతాదును తెలుగులో వివరిస్తుంది",
+    explainBtn: "వివరించండి",
+    stopBtn: "ఆపండి",
+    greeting: "నమస్కారం! గ్రీన్-ఐ వ్యవసాయ వాయిస్ అసిస్టెంట్ తెలుగులో మీకు వివరించడానికి సిద్ధంగా ఉంది.",
+    screenOverview: "మీరు ప్రస్తుతం గ్రీన్-ఐ చెరకు తెగుళ్ళ నిర్ధారణ ప్లాట్‌ఫారమ్‌ను చూస్తున్నారు. ఇక్కడ మీరు చెరకు ఆకు ఫోటోలను అప్‌లోడ్ చేసి ఎర్ర కుళ్ళు, రస్ట్, పసుపు ఆకు తెగులు మరియు మొజాయిక్ వ్యాధులను గుర్తించవచ్చు.",
+    Healthy: {
+      name: "ఆరోగ్యకరమైన చెరకు ఆకులు",
+      speech: "గ్రీన్-ఐ నిర్ధారణ: మీ చెరకు ఆకులు సంపూర్ణ ఆరోగ్యంగా, పచ్చగా ఉన్నాయి. ఎటువంటి రసాయన పురుగుమందులు అవసరం లేదు. సేంద్రీయ ఎరువులతో సాధారణ పోషణ కొనసాగించండి."
+    },
+    RedRot: {
+      name: "చెరకు ఎర్ర కుళ్ళు తెగులు",
+      speech: "గ్రీన్-ఐ అత్యవసర హెచ్చరిక: చెరకు ఎర్ర కుళ్ళు తెగులు గుర్తించబడింది. రోగకారక శిలీంధ్రం కొలెటోట్రైకమ్ ఫాల్కేటమ్. తక్షణమే తెగులు సోకిన పిలకలను వేళ్ళతో సహా పీకి కాల్చివేయండి. లీటరు నీటికి 2 గ్రాముల కార్బండజిమ్ 50% డబ్ల్యూపీ కలిపి పిచికారీ చేయండి."
+    },
+    Rust: {
+      name: "చెరకు ఆకు తుప్పు తెగులు",
+      speech: "గ్రీన్-ఐ నిర్ధారణ: చెరకు ఆకు తుప్పు తెగులు గుర్తించబడింది. రోగకారక శిలీంధ్రం పుక్సీనియా. క్రింది ఎండిన తెగులు ఆకులను తొలగించి గాలి ప్రసరణ పెంచండి. లీటరు నీటికి 2.5 గ్రాముల మ్యాంకోజెబ్ 75% డబ్ల్యూపీ కలిపి ఆకుల అడుగుభాగంలో పిచికారీ చేయండి."
+    },
+    Yellow: {
+      name: "చెరకు పసుపు ఆకు తెగులు",
+      speech: "గ్రీన్-ఐ నిర్ధారణ: చెరకు పసుపు ఆకు తెగులు గుర్తించబడింది. ఇది వైరస్ వల్ల వస్తుంది. తెగులు వ్యాప్తి చేసే పేనుబంక పురుగుల నివారణకు థయామెథాక్సమ్ 25% డబ్ల్యూజీ లీటరు నీటికి 0.3 గ్రాములు లేదా వేపనూనె పిచికారీ చేయండి."
+    },
+    Mosaic: {
+      name: "చెరకు మొజాయిక్ వైరస్",
+      speech: "గ్రీన్-ఐ నిర్ధారణ: చెరకు మొజాయిక్ వైరస్ తెగులు గుర్తించబడింది. ఆకులపై చారలు, పసుపు మచ్చలు ఏర్పడతాయి. తెగులు సోకిన పిలకలను తొలగించండి. రసం పీల్చే పురుగుల నివారణకు ఎసిటామిప్రిడ్ 0.2 గ్రాములు లీటరు నీటికి కలిపి పిచికారీ చేయండి."
+    },
+    dosage: (area, unit, disease, water, chem) => `${area} ${unit == 'acre' || unit == 'acres' ? 'ఎకరాల' : 'హెక్టార్ల'} ${disease} తెగులు నివారణకు: మొత్తం ${water} లీటర్ల నీటిలో ${chem} కలిపి ఆకులపై సమగ్రంగా పిచికారీ చేయండి.`
+  },
+  hi: {
+    name: "हिंदी",
+    label: "हिंदी (Hindi)",
+    agentTitle: "AI कृषि विशेषज्ञ वॉइस एजेंट",
+    subTitle: "गन्ने के रोग, स्कैन परिणाम और दवा की मात्रा हिंदी में समझाता है",
+    explainBtn: "समझाइए",
+    stopBtn: "रोकें",
+    greeting: "नमस्ते! ग्रीन-आई कृषि वॉइस असिस्टेंट हिंदी में आपकी सहायता के लिए तैयार है।",
+    screenOverview: "आप ग्रीन-आई गन्ना रोग निदान केंद्र देख रहे हैं। यहाँ आप पत्ती की फोटो अपलोड करके लाल सड़न, गेरुई, पीला पत्ता रोग और मोज़ेक वायरस की पहचान कर सकते हैं और कीटनाशक की मात्रा जान सकते हैं।",
+    Healthy: {
+      name: "स्वस्थ गन्ने की पत्तियाँ",
+      speech: "ग्रीन-आई निदान: आपके गन्ने की पत्तियाँ पूरी तरह स्वस्थ और हरी-भरी हैं। किसी भी रासायनिक कीटनाशक की आवश्यकता नहीं है। जैविक खाद के साथ सामान्य पोषण जारी रखें।"
+    },
+    RedRot: {
+      name: "गन्ने का लाल सड़न रोग",
+      speech: "ग्रीन-आई चेतावनी: गन्ने का लाल सड़न रोग पहचाना गया है। रोगजनक कोलिटोट्राइकम फाल्केटम है। तुरंत संक्रमित पौधों को उखाड़कर जला दें। प्रति लीटर पानी में 2 ग्राम कार्बेन्डाजिम 50% डब्ल्यूपी मिलाकर पत्तियों पर छिड़काव करें।"
+    },
+    Rust: {
+      name: "गन्ने का रस्ट (गेरुई रोग)",
+      speech: "ग्रीन-आई निदान: गन्ने का रस्ट यानी गेरुई रोग पहचाना गया है। रोगजनक पक्सिनिया है। नीचे की सूखी पत्तियों को हटाकर हवा का प्रवाह बढ़ाएँ। मैंकोज़ेब 75% डब्ल्यूपी 2.5 ग्राम प्रति लीटर पानी में मिलाकर पत्तियों की निचली सतह पर छिड़कें।"
+    },
+    Yellow: {
+      name: "गन्ने का पीला पत्ता रोग",
+      speech: "ग्रीन-आई निदान: गन्ने का पीला पत्ता रोग पहचाना गया है। यह वायरस जनित रोग है। कीट वाहक माहू की रोकथाम के लिए थायमेथॉक्सम 25% डब्ल्यूजी 0.3 ग्राम प्रति लीटर या नीम तेल का छिड़काव करें।"
+    },
+    Mosaic: {
+      name: "गन्ने का मोज़ेक वायरस",
+      speech: "ग्रीन-आई निदान: गन्ने का मोज़ेक वायरस रोग पहचाना गया है। पत्तियों पर पीले धब्बे और धारियां दिखाई देती हैं। संक्रमित पौधों को छांटकर नष्ट करें। माहू नियंत्रण हेतु एसिटामिप्रिड का छिड़काव करें।"
+    },
+    dosage: (area, unit, disease, water, chem) => `${area} ${unit == 'acre' || unit == 'acres' ? 'एकड़' : 'हेक्टेयर'} में ${disease} के उपचार हेतु: ${water} लीटर पानी में ${chem} मिलाकर अच्छी तरह छिड़काव करें।`
+  }
+};
+
+function speakMultilingual(text, lang = AppState.voiceLanguage) {
+  if (!text) return;
+
+  // Always update subtitle ribbon
+  updateSubtitle(text, true);
+
+  if (!('speechSynthesis' in window) || !AppState.soundEnabled) {
+    return;
+  }
+
+  try {
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Set appropriate language tag
+    if (lang === "te") {
+      utterance.lang = "te-IN";
+    } else if (lang === "hi") {
+      utterance.lang = "hi-IN";
+    } else {
+      utterance.lang = "en-IN";
+    }
+
+    // Try finding matching voice
+    const voices = window.speechSynthesis.getVoices();
+    if (voices && voices.length > 0) {
+      let matchedVoice = null;
+      if (lang === "te") {
+        matchedVoice = voices.find(v => v.lang && (v.lang.toLowerCase().includes("te") || v.name.toLowerCase().includes("telugu")));
+      } else if (lang === "hi") {
+        matchedVoice = voices.find(v => v.lang && (v.lang.toLowerCase().includes("hi") || v.name.toLowerCase().includes("hindi")));
+      } else {
+        matchedVoice = voices.find(v => v.lang && (v.lang.startsWith("en-IN") || v.lang.startsWith("en-GB") || v.lang.startsWith("en-US")));
+      }
+      if (matchedVoice) {
+        utterance.voice = matchedVoice;
+      }
+    }
+
+    utterance.rate = lang === "en" ? 0.95 : 0.88;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = () => {
+      AppState.isSpeaking = true;
+      if (DOM.voiceWaveform) DOM.voiceWaveform.classList.add("speaking");
+      if (DOM.voiceSubtitleStrip) DOM.voiceSubtitleStrip.classList.add("speaking");
+    };
+
+    utterance.onend = () => {
+      AppState.isSpeaking = false;
+      if (DOM.voiceWaveform) DOM.voiceWaveform.classList.remove("speaking");
+      if (DOM.voiceSubtitleStrip) DOM.voiceSubtitleStrip.classList.remove("speaking");
+    };
+
+    utterance.onerror = () => {
+      AppState.isSpeaking = false;
+      if (DOM.voiceWaveform) DOM.voiceWaveform.classList.remove("speaking");
+      if (DOM.voiceSubtitleStrip) DOM.voiceSubtitleStrip.classList.remove("speaking");
+    };
+
+    window.speechSynthesis.speak(utterance);
+  } catch (err) {
+    console.log("[GREEN-EYE Speech notice]", err);
+  }
+}
+
+function stopSpeech() {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+  AppState.isSpeaking = false;
+  if (DOM.voiceWaveform) DOM.voiceWaveform.classList.remove("speaking");
+  if (DOM.voiceSubtitleStrip) DOM.voiceSubtitleStrip.classList.remove("speaking");
+}
+
+function updateSubtitle(text, isSpeaking = true) {
+  if (DOM.voiceSubtitleText) {
+    DOM.voiceSubtitleText.textContent = text;
+  }
+  if (DOM.voiceSubtitleStrip) {
+    if (isSpeaking) {
+      DOM.voiceSubtitleStrip.classList.add("speaking");
+    } else {
+      DOM.voiceSubtitleStrip.classList.remove("speaking");
+    }
+  }
+}
+
+function setVoiceLanguage(lang) {
+  if (!MULTILINGUAL_AGRONOMY_DATA[lang]) return;
+  AppState.voiceLanguage = lang;
+  const langData = MULTILINGUAL_AGRONOMY_DATA[lang];
+
+  // Update UI language buttons
+  document.querySelectorAll(".btn-lang").forEach(btn => {
+    if (btn.getAttribute("data-lang") === lang) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+
+  // Update header text badges
+  if (DOM.voiceCurrentLangBadge) {
+    DOM.voiceCurrentLangBadge.textContent = langData.label;
+  }
+  if (DOM.voiceSubTitleText) {
+    DOM.voiceSubTitleText.textContent = langData.subTitle;
+  }
+  if (DOM.voiceExplainBtnText) {
+    DOM.voiceExplainBtnText.textContent = langData.explainBtn;
+  }
+  if (DOM.voiceStopBtnText) {
+    DOM.voiceStopBtnText.textContent = langData.stopBtn;
+  }
+  const heading = document.getElementById("voiceAgentMainHeading");
+  if (heading) {
+    heading.textContent = langData.agentTitle;
+  }
+
+  // Greet user in newly selected language
+  speakMultilingual(langData.greeting, lang);
+}
+
+function explainCurrentDiagnosis(lang = AppState.voiceLanguage) {
+  if (!AppState.analysisData) {
+    const notReady = {
+      en: "Please upload or select a sugarcane leaf to analyze before requesting diagnosis audio.",
+      te: "దయచేసి విశ్లేషణ కోసం ముందుగా ఒక చెరకు ఆకును ఎంచుకోండి లేదా అప్‌లోడ్ చేయండి.",
+      hi: "कृपया पहले एक गन्ने की पत्ती अपलोड करें या चुनें, फिर निदान सुनें।"
+    };
+    speakMultilingual(notReady[lang] || notReady.en, lang);
+    return;
+  }
+
+  const top = AppState.analysisData.topClass;
+  const langData = MULTILINGUAL_AGRONOMY_DATA[lang] || MULTILINGUAL_AGRONOMY_DATA.en;
+  const speechText = langData[top] ? langData[top].speech : langData.Healthy.speech;
+  speakMultilingual(speechText, lang);
+}
+
+function explainDosagePlan(lang = AppState.voiceLanguage) {
+  const disease = DOM.calcDiseaseSelect ? DOM.calcDiseaseSelect.value : "RedRot";
+  const area = DOM.calcArea ? DOM.calcArea.value : "5";
+  const unit = DOM.calcUnit ? DOM.calcUnit.value : "acres";
+  const water = DOM.calcTotalWater ? DOM.calcTotalWater.textContent : "1000 L";
+  const chem = DOM.calcRecChemical ? DOM.calcRecChemical.textContent : "Carbendazim";
+
+  const langData = MULTILINGUAL_AGRONOMY_DATA[lang] || MULTILINGUAL_AGRONOMY_DATA.en;
+  const text = langData.dosage(area, unit, disease, water, chem);
+  speakMultilingual(text, lang);
+}
+
+function explainScreen(lang = AppState.voiceLanguage) {
+  // If an analysis is already on screen, explain the diagnosis
+  if (AppState.analysisData) {
+    explainCurrentDiagnosis(lang);
+  } else {
+    const langData = MULTILINGUAL_AGRONOMY_DATA[lang] || MULTILINGUAL_AGRONOMY_DATA.en;
+    speakMultilingual(langData.screenOverview, lang);
+  }
+}
+
+// Backward compatible helper
 function speakText(text) {
-  if (!('speechSynthesis' in window) || !AppState.soundEnabled) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = 1.0;
-  utterance.pitch = 1.0;
-  window.speechSynthesis.speak(utterance);
+  speakMultilingual(text, AppState.voiceLanguage);
 }
 
 /* ==========================================================================

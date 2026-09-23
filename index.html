@@ -27,6 +27,68 @@
   <div class="ambient-glow glow-3"></div>
   <div class="eye-reticle-bg"></div>
 
+  <!-- Top Multilingual AI Agronomist Voice Assistant Bar -->
+  <aside class="voice-agent-bar" id="voiceAgentBar" aria-label="AI Agronomist Voice Assistant">
+    <div class="voice-agent-container">
+      <div class="voice-agent-identity">
+        <div class="voice-avatar-box" id="voiceAvatarBox">
+          <i class="fa-solid fa-headset"></i>
+          <span class="voice-ping-dot"></span>
+        </div>
+        <div class="voice-title-group">
+          <div class="voice-main-title">
+            <strong id="voiceAgentMainHeading">AI Agronomist Voice Agent</strong>
+            <span class="voice-lang-pill" id="voiceCurrentLangBadge">EN (English)</span>
+          </div>
+          <div class="voice-sub-title" id="voiceSubTitleText">
+            Explaining Sugarcane Pathology, Field Scans & Dosage in Real-Time
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Speech Waveform Indicator (animates when speaking) -->
+      <div class="voice-waveform" id="voiceWaveform" title="Voice playback status">
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+      </div>
+
+      <!-- Language Selector Buttons -->
+      <div class="voice-lang-switcher" id="voiceLangSwitcher">
+        <span class="lang-label"><i class="fa-solid fa-language"></i> Language:</span>
+        <button type="button" class="btn-lang active" data-lang="en" id="langBtnEn" title="English / ఇంగ్లీష్ / अंग्रेज़ी">
+          <span class="lang-flag">🇬🇧</span> English
+        </button>
+        <button type="button" class="btn-lang" data-lang="te" id="langBtnTe" title="Telugu / తెలుగు / तेलुगु">
+          <span class="lang-flag">🌾</span> తెలుగు
+        </button>
+        <button type="button" class="btn-lang" data-lang="hi" id="langBtnHi" title="Hindi / हिंदी / హిందీ">
+          <span class="lang-flag">🇮🇳</span> हिंदी
+        </button>
+      </div>
+
+      <!-- Action Controls -->
+      <div class="voice-controls-group">
+        <button type="button" class="btn-voice-action btn-voice-explain" id="voiceExplainBtn" title="Speak full analysis of current screen">
+          <i class="fa-solid fa-volume-high"></i> <span id="voiceExplainBtnText">Explain Screen</span>
+        </button>
+        <button type="button" class="btn-voice-action btn-voice-stop" id="voiceStopBtn" title="Stop speech playback">
+          <i class="fa-solid fa-stop"></i> <span id="voiceStopBtnText">Stop</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Synchronized Subtitles / Transcript Ribbon -->
+    <div class="voice-subtitle-strip" id="voiceSubtitleStrip">
+      <i class="fa-solid fa-quote-left text-green"></i>
+      <span class="subtitle-text" id="voiceSubtitleText">
+        Welcome to GREEN-EYE. Select English, తెలుగు, or हिंदी, then click "Explain Screen" or diagnose a leaf to hear your AI Agronomist guide!
+      </span>
+    </div>
+  </aside>
+
   <!-- Header Navigation -->
   <header class="site-header" id="mainHeader">
     <div class="header-container">
@@ -1019,7 +1081,12 @@
 
         <!-- Calculation Output Results -->
         <div class="calc-results-col">
-          <h3 class="calc-col-title"><i class="fa-solid fa-receipt"></i> Prescribed Chemical & Economic Schedule</h3>
+          <div class="calc-results-header-row">
+            <h3 class="calc-col-title"><i class="fa-solid fa-receipt"></i> Prescribed Chemical & Economic Schedule</h3>
+            <button type="button" class="btn btn-sm btn-outline btn-voice-trigger" id="speakDosageBtn" title="Listen to Dosage Plan in active language">
+              <i class="fa-solid fa-volume-high text-green"></i> <span id="speakDosageBtnLabel">Listen Plan</span>
+            </button>
+          </div>
           
           <div class="calc-result-box highlight-box">
             <div class="res-item">
