@@ -42,62 +42,292 @@ const DATASET_SAMPLES = {
   ]
 };
 
-// Clinical Pathogen Information & Prescriptions
+// Multilingual Clinical Pathogen Information & Prescriptions (English, Telugu, Hindi)
+const MULTILINGUAL_DISEASE_KNOWLEDGE = {
+  en: {
+    Healthy: {
+      title: "Healthy Sugarcane Foliage",
+      pathogen: "Saccharum officinarum L. (Normal Vigorous Tissue)",
+      severity: "Normal (Optimal Leaf Health)",
+      immediate: "No corrective agronomic intervention required. Leaf structure exhibits optimal photosynthetic chlorophyll vigor.",
+      chemical: "No chemical fungicides needed. Preserve beneficial phyllosphere microflora and avoid unnecessary spraying.",
+      biological: "Continue regular soil organic matter enrichment and beneficial mycorrhizal inoculation.",
+      followup: "Maintain scheduled canopy monitoring every 21–30 days. Inspect underside of leaves for early vector aphid presence.",
+      speech: "GREEN-EYE Diagnosis: Foliage is healthy with robust chlorophyll reflectance. No active fungal or viral lesions detected."
+    },
+    RedRot: {
+      title: "Sugarcane Red Rot Disease",
+      pathogen: "Colletotrichum falcatum Went (Glomerella tucumanensis)",
+      severity: "Critical (Severe Foliar / Midrib Infection)",
+      immediate: "Immediately rogue out and safely incinerate heavily infected clumps. Eliminate standing water from field furrows.",
+      chemical: "Apply foliar spray of Carbendazim 50% WP @ 2.0g/L or Thiophanate Methyl 70% WP @ 1.5g/L water directly over canopy.",
+      biological: "Inoculate soil with Trichoderma harzianum @ 10g/L or fermented Pseudomonas fluorescens formulation.",
+      followup: "Resurvey field in 12–14 days. Avoid continuous ratoon in infected plots; treat seed sets at 52°C before next planting.",
+      speech: "GREEN-EYE Critical Alert: Sugarcane Red Rot detected. Rogue out infected clumps and apply Carbendazim 50% WP."
+    },
+    Rust: {
+      title: "Sugarcane Leaf Rust",
+      pathogen: "Puccinia melanocephala / Puccinia kuehnii",
+      severity: "Moderate to High (Foliar Uredinia Spores)",
+      immediate: "Detrash and destroy heavily rusted senescent lower leaves to enhance inter-row ventilation and lower micro-humidity.",
+      chemical: "Spray protective fungicide Mancozeb 75% WP @ 2.5g/L or systemic triazole Propiconazole 25% EC @ 1.0ml/L.",
+      biological: "Apply foliar spray of Bacillus amyloliquefaciens biocontrol suspension during early morning dew drying.",
+      followup: "Re-inspect after 10 days if high humidity (>80%) persists. Balance N-P-K fertilization to avoid excess nitrogen.",
+      speech: "GREEN-EYE Diagnosis: Sugarcane Rust detected. Foliar pustules present. Spray Mancozeb 75% WP or Propiconazole 25% EC."
+    },
+    Yellow: {
+      title: "Sugarcane Yellow Leaf Disease",
+      pathogen: "Sugarcane yellow leaf virus (SCYLV) / Polerovirus",
+      severity: "Systemic (Phloem Vessel Restriction)",
+      immediate: "Flag and isolate infected field blocks. Ensure optimal drip irrigation to mitigate moisture-induced symptom flare.",
+      chemical: "Target insect vector Melanaphis sacchari (Sugarcane aphid) with Thiamethoxam 25% WG @ 0.3g/L or Imidacloprid 17.8% SL @ 0.3ml/L.",
+      biological: "Release predatory ladybird beetles (Coccinella septempunctata) or apply Azadirachtin (Neem oil 10,000 ppm) @ 2.5ml/L.",
+      followup: "Audit next cycle seed-cane nursery using tissue-culture or serologically certified virus-indexed sets.",
+      speech: "GREEN-EYE Diagnosis: Sugarcane Yellow Leaf Virus detected. Foliar chlorosis observed. Control aphid vectors with Thiamethoxam."
+    },
+    Mosaic: {
+      title: "Sugarcane Mosaic Virus (SCMV)",
+      pathogen: "Sugarcane mosaic virus (SCMV) / Potyviridae",
+      severity: "Moderate (Chlorotic Foliar Mottling)",
+      immediate: "Systematically rogue out symptomatic stunted clumps during early tillering (45–60 days after germination).",
+      chemical: "Control vector aphid colonies (Rhopalosiphum maidis) with Acetamiprid 20% SP @ 0.2g/L or Dimethoate 30% EC @ 1.5ml/L.",
+      biological: "Introduce Chrysoperla carnea (Green lacewing) larvae to feed on aphid colonies.",
+      followup: "Sterilize harvest machetes and cutter blades with 10% sodium hypochlorite to prevent mechanical transmission.",
+      speech: "GREEN-EYE Diagnosis: Sugarcane Mosaic Virus detected with foliar mottling. Rogue clumps and spray Acetamiprid."
+    }
+  },
+  te: {
+    Healthy: {
+      title: "ఆరోగ్యకరమైన చెరకు పంట (Healthy Canes)",
+      pathogen: "సకరమ్ అఫిసినారమ్ (ఆరోగ్యకరమైన ఆకు కణజాలం)",
+      severity: "సాధారణం (పూర్తి ఆరోగ్యం)",
+      immediate: "ఎటువంటి అత్యవసర రసాయన చర్య అవసరం లేదు. ఆకులో క్లోరోఫిల్ మరియు కిరణజన్య సంయోగ క్రియ అత్యుత్తమంగా ఉంది.",
+      chemical: "ఎటువంటి రసాయన శిలీంద్రనాశినులు వాడవలసిన అవసరం లేదు. మితమైన పోషకాల యాజమాన్యం పాటించండి.",
+      biological: "నేలలో సేంద్రీయ ఎరువులు, మైకోరైజా మరియు జీవన ఎరువులను క్రమబద్ధంగా అందించండి.",
+      followup: "ప్రతి 20-30 రోజులకు ఒకసారి తోటను పరిశీలిస్తూ పేనుబంక లేదా ఇతర రసం పీల్చే పురుగుల ఉనికిని తనిఖీ చేయండి.",
+      speech: "గ్రీన్-ఐ నివేదిక: చెరకు ఆకు పూర్తి ఆరోగ్యంగా ఉంది. ఎటువంటి ఫంగస్ లేదా వైరస్ తెగుళ్లు లేవు."
+    },
+    RedRot: {
+      title: "చెరకు ఎర్ర కుళ్లు తెగులు (Sugarcane Red Rot)",
+      pathogen: "కొల్లెటోట్రైకమ్ ఫాల్కాటమ్ (Colletotrichum falcatum)",
+      severity: "తీవ్రమైనది (ప్రమాదకరమైన ఫంగల్ ఇన్ఫెక్షన్)",
+      immediate: "వ్యాధి తీవ్రంగా సోకిన చెరకు దుబ్బులను వేర్లతో సహా పీకి వెంటనే తగులబెట్టండి. పొలంలో నీరు నిల్వ ఉండకుండా మురుగు నీటిని తీసివేయండి.",
+      chemical: "లీటరు నీటికి కార్బెండజిమ్ 50% WP 2.0 గ్రాములు లేదా థయోఫనేట్ మిథైల్ 70% WP 1.5 గ్రాములు కలిపి ఆకులపై మరియు కాండంపై పిచికారీ చేయండి.",
+      biological: "ట్రైకోడెర్మా హార్జియానమ్ (Trichoderma) జీవ శిలీంద్రనాశినిని ఎకరానికి 2.5 కిలోల చొప్పున పశువుల ఎరువుతో కలిపి నేలలో వేయండి.",
+      followup: "12-14 రోజుల తర్వాత మళ్లీ తోటను తనిఖీ చేయండి. విత్తన చెరకును నాటే ముందు 52 డిగ్రీల వేడి నీటిలో శుద్ధి చేయండి.",
+      speech: "గ్రీన్-ఐ హెచ్చరిక: చెరకులో అత్యంత ప్రమాదకరమైన ఎర్ర కుళ్లు తెగులు గుర్తించబడింది. వెంటనే దుబ్బులను పీకి నాశనం చేయండి. కార్బెండజిమ్ పిచికారీ చేయండి."
+    },
+    Rust: {
+      title: "చెరకు తుప్పు తెగులు (Sugarcane Rust)",
+      pathogen: "పక్సీనియా మెలనోసెఫలా (Puccinia melanocephala)",
+      severity: "మధ్యస్థం నుండి తీవ్రం (ఆకులపై తుప్పు మచ్చలు)",
+      immediate: "తుప్పు ఎక్కువగా సోకిన కింది ఎండు ఆకులను తుంచి నాశనం చేయండి. దీనివలన గాలి ప్రసరణ పెరిగి తేమ తగ్గుతుంది.",
+      chemical: "లీటరు నీటికి మాంకోజెబ్ 75% WP 2.5 గ్రాములు లేదా ప్రొపికొనాజోల్ 25% EC 1.0 మిల్లీలీటర్ కలిపి పిచికారీ చేయండి.",
+      biological: "బాసిల్లస్ అమిలోలిక్విఫేసియన్స్ (Bacillus) జీవ నియంత్రణ ద్రావణాన్ని ఉదయాన్నే మంచు ఆరిన తర్వాత పిచికారీ చేయండి.",
+      followup: "గాలిలో తేమ ఎక్కువగా ఉంటే 10 రోజుల తర్వాత మరలా పరిశీలించండి. నత్రజని ఎరువులను అధికంగా వాడవద్దు.",
+      speech: "గ్రీన్-ఐ నివేదిక: చెరకులో తుప్పు తెగులు గుర్తించబడింది. ఆకులపై గోధుమ రంగు మచ్చలు ఉన్నాయి. మాంకోజెబ్ లేదా ప్రొపికొనాజోల్ పిచికారీ చేయండి."
+    },
+    Yellow: {
+      title: "చెరకు పసుపు ఆకు తెగులు (Yellow Leaf Disease)",
+      pathogen: "షుగర్‌కేన్ ఎల్లో లీఫ్ వైరస్ (SCYLV / Polerovirus)",
+      severity: "వ్యవస్థాగత వైరస్ (రస ప్రసరణ నాళాల అవరోధం)",
+      immediate: "వ్యాధి సోకిన మొక్కలను గుర్తించి వేరు చేయండి. మొక్కలకు నీటి ఎద్దడి కలగకుండా క్రమం తప్పకుండా డ్రిప్ ద్వారా నీటిని అందించండి.",
+      chemical: "వైరస్ వాహకమైన చెరకు పేనుబంక పురుగుల నివారణకు థయామిథోక్సామ్ 25% WG లీటరుకు 0.3 గ్రాములు లేదా ఇమిడాక్లోప్రిడ్ 0.3 మి.లీ పిచికారీ చేయండి.",
+      biological: "లేడీబర్డ్ బీటిల్స్ లేదా 10,000 ppm వేపనూనెను లీటరు నీటికి 2.5 మిల్లీలీటర్లు కలిపి వాడండి.",
+      followup: "తదుపరి నాటే పంట కోసం టిష్యూ కల్చర్ ద్వారా ఉత్పత్తి చేసిన వైరస్ లేని ధృవీకరించిన విత్తన చెరకును మాత్రమే ఎంచుకోండి.",
+      speech: "గ్రీన్-ఐ నివేదిక: చెరకులో పసుపు ఆకు తెగులు గుర్తించబడింది. పేనుబంక పురుగుల నివారణకు థయామిథోక్సామ్ లేదా వేపనూనె పిచికారీ చేయండి."
+    },
+    Mosaic: {
+      title: "చెరకు మొజాయిక్ వైరస్ (Sugarcane Mosaic Virus)",
+      pathogen: "షుగర్‌కేన్ మొజాయిక్ వైరస్ (SCMV / Potyviridae)",
+      severity: "మధ్యస్థం (ఆకులపై పసుపు చారలు)",
+      immediate: "మొలకెత్తిన 45-60 రోజులలోపు ఎదిగి ఎదగని గిడసబారిన రోగగ్రస్త దుబ్బులను పీకి వేయండి.",
+      chemical: "రసం పీల్చే పురుగుల నివారణకు ఎసిటామిప్రిడ్ 20% SP 0.2 గ్రాములు లేదా డైమిథోయేట్ 30% EC 1.5 మి.లీ లీటరు నీటికి కలిపి పిచికారీ చేయండి.",
+      biological: "రసం పీల్చే పురుగుల గుడ్లను నాశనం చేయడానికి పచ్చరెక్కల పురుగు (Chrysoperla carnea) పిల్లలను తోటలో వదలండి.",
+      followup: "కోత కొడవళ్ళు మరియు యంత్రాలను 10% సోడియం హైపోక్లోరైట్ ద్రావణంతో శుభ్రపరచడం ద్వారా వైరస్ వ్యాప్తిని అరికట్టండి.",
+      speech: "గ్రీన్-ఐ నివేదిక: చెరకులో మొజాయిక్ తెగులు గుర్తించబడింది. ఆకులపై చారలు ఏర్పడతాయి. తెగులు సోకిన మొక్కలను తొలగించి ఎసిటామిప్రిడ్ పిచికారీ చేయండి."
+    }
+  },
+  hi: {
+    Healthy: {
+      title: "स्वस्थ गन्ने की फसल (Healthy Crop)",
+      pathogen: "सैकरम ऑफिसिनेरम (स्वस्थ पर्ण ऊतक)",
+      severity: "सामान्य (उत्कृष्ट पर्ण स्वास्थ्य)",
+      immediate: "किसी रासायनिक उपचार की आवश्यकता नहीं है। पत्तियों में क्लोरोफिल और प्रकाश संश्लेषण की क्षमता इष्टतम है।",
+      chemical: "किसी कवकनाशी की आवश्यकता नहीं है। अनावश्यक छिड़काव से बचें ताकि प्राकृतिक लाभकारी सूक्ष्मजीव सुरक्षित रहें।",
+      biological: "मिट्टी में नियमित रूप से गोबर की खाद, कम्पोस्ट और ट्राइकोडर्मा का उपयोग बनाए रखें।",
+      followup: "हर 20 से 30 दिनों में फसल का निरीक्षण करते रहें और माहू या कीटों की प्रारंभिक स्थिति की जांच करें।",
+      speech: "ग्रीन-आई निदान: पत्ती पूर्ण रूप से स्वस्थ है। कोई कवक या विषाणु संक्रमण नहीं पाया गया।"
+    },
+    RedRot: {
+      title: "गन्ने का लाल सड़न रोग (Sugarcane Red Rot)",
+      pathogen: "कोलेटोट्राइकम फाल्केटम (Colletotrichum falcatum)",
+      severity: "अत्यधिक गंभीर (घातक कवक संक्रमण)",
+      immediate: "रोगग्रस्त पौधों को तुरंत जड़ सहित उखाड़कर जला दें। खेत की क्यारियों में जलभराव न होने दें।",
+      chemical: "कार्बेन्डाजिम 50% डब्ल्यूपी 2.0 ग्राम या थायोफेनेट मिथाइल 70% डब्ल्यूपी 1.5 ग्राम प्रति लीटर पानी में मिलाकर पत्तियों और तने पर अच्छी तरह छिड़कें।",
+      biological: "ट्राइकोडर्मा हारज़ियानम (2.5 किलोग्राम प्रति एकड़) को सड़ी गोबर की खाद में मिलाकर मिट्टी में डालें।",
+      followup: "12-14 दिनों बाद पुनः खेत की जांच करें। संक्रमित खेत में पेड़ी न लें। अगली बुवाई से पहले बीजों को 52 डिग्री सेल्सियस गर्म पानी से उपचारित करें।",
+      speech: "ग्रीन-आई गंभीर चेतावनी: गन्ने में लाल सड़न रोग पाया गया है। संक्रमित पौधों को तुरंत उखाड़कर नष्ट करें और कार्बेन्डाजिम छिड़कें।"
+    },
+    Rust: {
+      title: "गन्ने का रतुआ रोग (Sugarcane Leaf Rust)",
+      pathogen: "पक्सीनिया मेलानोसेफला (Puccinia melanocephala)",
+      severity: "मध्यम से उच्च (पत्तियों पर भूरे फफोले)",
+      immediate: "अधिक संक्रमित निचली सूखी पत्तियों को तोड़कर नष्ट करें जिससे हवा का आवागमन बढ़े और खेत में नमी कम हो।",
+      chemical: "मैंकोजेब 75% डब्ल्यूपी 2.5 ग्राम या प्रोपिकोनाज़ोल 25% ईसी 1.0 मिलीलीटर प्रति लीटर पानी में मिलाकर छिड़काव करें।",
+      biological: "बैसिलस एमाइलोलिक्विफेशिएंस जैव नियंत्रण का छिड़काव सुबह की ओस सूखने के बाद करें।",
+      followup: "यदि वातावरण में उच्च आर्द्रता बनी रहे तो 10 दिनों बाद दोबारा जांच करें। नाइट्रोजन का अत्यधिक प्रयोग न करें।",
+      speech: "ग्रीन-आई निदान: गन्ने में रतुआ रोग की पुष्टि हुई है। पत्तियों पर फफोले मौजूद हैं। मैंकोजेब या प्रोपिकोनाज़ोल का छिड़काव करें।"
+    },
+    Yellow: {
+      title: "गन्ने का पीला पत्ता रोग (Yellow Leaf Disease)",
+      pathogen: "शुगरकेन येलो लीफ वायरस (SCYLV / Polerovirus)",
+      severity: "प्रणालीगत विषाणु (फ्लोएम वाहिकाओं में अवरोध)",
+      immediate: "संक्रमित पौधों को चिह्नित कर अलग करें। पौधों में पानी की कमी न होने दें और ड्रिप सिंचाई का उचित प्रबंध रखें।",
+      chemical: "रोग फैलाने वाले कीट माहू (एफिड) की रोकथाम हेतु थायमेथॉक्सम 25% डब्ल्यूजी 0.3 ग्राम या इमिडाक्लोप्रिड 0.3 मिलीलीटर प्रति लीटर पानी में छिड़कें।",
+      biological: "लेडीबर्ड भृंग छोड़ें या 10,000 पीपीएम नीम तेल 2.5 मिलीलीटर प्रति लीटर का छिड़काव करें।",
+      followup: "अगली फसल के लिए केवल टिशू कल्चर या प्रमाणित रोगमुक्त बीजों का ही चयन करें।",
+      speech: "ग्रीन-आई निदान: गन्ने का पीला पत्ता रोग पहचाना गया है। माहू कीट की रोकथाम हेतु थायमेथॉक्सम या नीम तेल का छिड़काव करें।"
+    },
+    Mosaic: {
+      title: "गन्ने का मोज़ेक वायरस (Sugarcane Mosaic Virus)",
+      pathogen: "शुगरकेन मोज़ेक वायरस (SCMV / Potyviridae)",
+      severity: "मध्यम (पत्तियों पर हरी-पीली धारियां)",
+      immediate: "जमाव के 45-60 दिनों के भीतर बौने और रोगग्रस्त पौधों को खेत से उखाड़कर नष्ट करें।",
+      chemical: "वाहक कीट माहू के नियंत्रण हेतु एसिटामिप्रिड 20% एसपी 0.2 ग्राम या डाइमेथोएट 30% ईसी 1.5 मिलीलीटर प्रति लीटर का छिड़काव करें।",
+      biological: "एफिड नियंत्रण के लिए क्राइसोपर्ला कार्निया (ग्रीन लेसविंग) के लार्वा खेत में छोड़ें।",
+      followup: "कटाई के औजारों को 10% सोडियम हाइपोक्लोराइट से रोगाणुरहित करें ताकि यह रोग स्वस्थ पौधों में न फैले।",
+      speech: "ग्रीन-आई निदान: गन्ने का मोज़ेक वायरस रोग पहचाना गया है। पत्तियों पर धारियां हैं। संक्रमित पौधों को छांटकर एसिटामिप्रिड छिड़कें।"
+    }
+  }
+};
+
+// UI Localization Dictionary (English, Telugu, Hindi)
+const UI_LABELS = {
+  en: {
+    reportTitle: "Diagnostic Pathology Report",
+    resultsLanguage: "Result Language / ఫలితాల భాష / परिणाम भाषा:",
+    speakBtn: "Speak",
+    printBtn: "Print Report",
+    probTitle: "Multi-Class Probability Distribution",
+    treatmentTitle: "Clinical Agronomic Prescription",
+    lblImmediate: "Immediate Action",
+    lblChemical: "Chemical Treatment",
+    lblBiological: "Cultural & Biocontrol",
+    lblFollowup: "Follow-up Schedule",
+    calcCta: "Calculate Chemical Dosage for your Acreage",
+    causalAgentPrefix: "Causal Agent: ",
+    loginGateTitle: "Welcome to GREEN-EYE",
+    loginGateSub: "Precision Sugarcane Pathology & Agronomic Diagnostic Platform",
+    loginNameLabel: "Full Name / Username",
+    loginEmailLabel: "Gmail Address / Username",
+    loginPassLabel: "Password",
+    loginEnterBtn: "Authenticate & Enter GREEN-EYE",
+    loginGoogleBtn: "Continue with Google / Gmail",
+    loginDemoBtn: "1-Click Quick Demo Login (Tarun Kumar / agronomist@gmail.com)"
+  },
+  te: {
+    reportTitle: "రోగ నిర్ధారణ నివేదిక (Diagnostic Report)",
+    resultsLanguage: "ఫలితాల భాష (Results in):",
+    speakBtn: "వినండి",
+    printBtn: "రిపోర్ట్ ప్రింట్",
+    probTitle: "బహుళ-తరగతి సంభావ్యత పంపిణీ (Probabilities)",
+    treatmentTitle: "వ్యవసాయ శాస్త్రవేత్తల నివారణ సూచనలు",
+    lblImmediate: "తక్షణ చర్య (Immediate Action)",
+    lblChemical: "రసాయన నివారణ (Chemical)",
+    lblBiological: "జీవ నియంత్రణ (Biocontrol)",
+    lblFollowup: "పర్యవేక్షణ షెడ్యూల్ (Follow-up)",
+    calcCta: "మీ పొలం విస్తీర్ణానికి మందుల మోతాదును లెక్కించండి",
+    causalAgentPrefix: "రోగ కారకం (Causal Agent): ",
+    loginGateTitle: "గ్రీన్-ఐ ప్లాట్‌ఫారమ్‌కు స్వాగతం",
+    loginGateSub: "చెరకు ఆకుల వ్యాధి నిర్ధారణ మరియు ఆధునిక వ్యవసాయ సలహా వేదిక",
+    loginNameLabel: "పూర్తి పేరు / వినియోగదారు పేరు",
+    loginEmailLabel: "జీమెయిల్ చిరునామా (Gmail Address)",
+    loginPassLabel: "పాస్‌వర్డ్",
+    loginEnterBtn: "గ్రీన్-ఐ లోకి ప్రవేశించండి",
+    loginGoogleBtn: "గూగుల్ / జీమెయిల్‌తో లాగిన్ అవ్వండి",
+    loginDemoBtn: "1-క్లిక్ డెమో లాగిన్ (తరుణ్ కుమార్ / agronomist@gmail.com)"
+  },
+  hi: {
+    reportTitle: "रोग निदान रिपोर्ट (Diagnostic Report)",
+    resultsLanguage: "परिणाम भाषा (Results in):",
+    speakBtn: "सुनें",
+    printBtn: "प्रिंट रिपोर्ट",
+    probTitle: "बहु-वर्गीय संभावना वितरण (Probabilities)",
+    treatmentTitle: "कृषि विशेषज्ञ उपचार व रोकथाम परामर्श",
+    lblImmediate: "तत्काल कार्रवाई (Immediate Action)",
+    lblChemical: "रासायनिक उपचार (Chemical)",
+    lblBiological: "जैविक नियंत्रण (Biocontrol)",
+    lblFollowup: "निगरानी कार्यक्रम (Follow-up)",
+    calcCta: "अपने खेत के क्षेत्रफल अनुसार दवा की मात्रा गणना करें",
+    causalAgentPrefix: "रोगजनक (Causal Agent): ",
+    loginGateTitle: "ग्रीन-आई में आपका स्वागत है",
+    loginGateSub: "सटीक गन्ना पत्ती रोग निदान एवं कृषि विशेषज्ञ मंच",
+    loginNameLabel: "पूरा नाम / उपयोगकर्ता नाम",
+    loginEmailLabel: "जीमेल पता (Gmail Address)",
+    loginPassLabel: "पासवर्ड",
+    loginEnterBtn: "प्रमाणित करें और ग्रीन-आई में प्रवेश करें",
+    loginGoogleBtn: "गूगल / जीमेल से जारी रखें",
+    loginDemoBtn: "1-क्लिक डेमो लॉगिन (तरुण कुमार / agronomist@gmail.com)"
+  }
+};
+
+// Base fallback & visual attributes
 const DISEASE_KNOWLEDGE = {
   Healthy: {
-    title: "Healthy Sugarcane Foliage",
-    pathogen: "Saccharum officinarum L. (Normal Vigorous Tissue)",
-    severity: "Normal (Optimal Health)",
+    title: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Healthy.title,
+    pathogen: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Healthy.pathogen,
+    severity: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Healthy.severity,
     icon: "fa-circle-check",
     colorClass: "verdict-healthy",
-    immediate: "No corrective agronomic intervention required. Leaf structure exhibits optimal photosynthetic vigor.",
-    chemical: "No chemical fungicides needed. Avoid excessive prophylactic spraying to preserve beneficial phyllosphere microflora.",
-    biological: "Continue regular soil organic matter enrichment and beneficial mycorrhizal inoculation.",
-    followup: "Maintain scheduled canopy monitoring every 21–30 days. Inspect underside of leaves for early vector aphid presence."
+    immediate: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Healthy.immediate,
+    chemical: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Healthy.chemical,
+    biological: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Healthy.biological,
+    followup: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Healthy.followup
   },
   RedRot: {
-    title: "Sugarcane Red Rot Disease",
-    pathogen: "Colletotrichum falcatum Went (Glomerella tucumanensis)",
-    severity: "Severe (Critical Foliar / Midrib Infection)",
+    title: MULTILINGUAL_DISEASE_KNOWLEDGE.en.RedRot.title,
+    pathogen: MULTILINGUAL_DISEASE_KNOWLEDGE.en.RedRot.pathogen,
+    severity: MULTILINGUAL_DISEASE_KNOWLEDGE.en.RedRot.severity,
     icon: "fa-triangle-exclamation",
     colorClass: "verdict-redrot",
-    immediate: "Immediately rogue out and safely incinerate heavily infected clumps. Eliminate standing water from field furrows.",
-    chemical: "Apply foliar spray of Carbendazim 50% WP @ 2.0g/L or Thiophanate Methyl 70% WP @ 1.5g/L water directly over canopy.",
-    biological: "Inoculate soil with Trichoderma harzianum @ 10g/L or fermented Pseudomonas fluorescens formulation.",
-    followup: "Resurvey field in 12–14 days. Avoid continuous ratoon in infected plots; treat seed sets at 52°C before next planting."
+    immediate: MULTILINGUAL_DISEASE_KNOWLEDGE.en.RedRot.immediate,
+    chemical: MULTILINGUAL_DISEASE_KNOWLEDGE.en.RedRot.chemical,
+    biological: MULTILINGUAL_DISEASE_KNOWLEDGE.en.RedRot.biological,
+    followup: MULTILINGUAL_DISEASE_KNOWLEDGE.en.RedRot.followup
   },
   Rust: {
-    title: "Sugarcane Leaf Rust",
-    pathogen: "Puccinia melanocephala / Puccinia kuehnii",
-    severity: "Moderate to High (Foliar Uredinia Spores)",
+    title: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Rust.title,
+    pathogen: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Rust.pathogen,
+    severity: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Rust.severity,
     icon: "fa-burst",
     colorClass: "verdict-rust",
-    immediate: "Detrash and destroy heavily rusted senescent lower leaves to enhance inter-row ventilation and lower micro-humidity.",
-    chemical: "Spray protective fungicide Mancozeb 75% WP @ 2.5g/L or systemic triazole Pyraclostrobin + Epoxiconazole @ 1.0ml/L.",
-    biological: "Apply foliar spray of Bacillus amyloliquefaciens biocontrol suspension during early morning dew drying.",
-    followup: "Re-inspect after 10 days if high humidity (>80%) persists. Balance N-P-K fertilization to avoid excess succulent nitrogen."
+    immediate: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Rust.immediate,
+    chemical: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Rust.chemical,
+    biological: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Rust.biological,
+    followup: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Rust.followup
   },
   Yellow: {
-    title: "Sugarcane Yellow Leaf Disease",
-    pathogen: "Sugarcane yellow leaf virus (SCYLV) / Polerovirus",
-    severity: "Systemic (Phloem Vessel Restriction)",
+    title: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Yellow.title,
+    pathogen: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Yellow.pathogen,
+    severity: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Yellow.severity,
     icon: "fa-sun",
     colorClass: "verdict-yellow",
-    immediate: "Flag and isolate infected field blocks. Ensure optimal drip irrigation to mitigate moisture-induced symptom flare.",
-    chemical: "Target insect vector Melanaphis sacchari (Sugarcane aphid) with Thiamethoxam 25% WG @ 0.3g/L or Imidacloprid 17.8% SL @ 0.3ml/L.",
-    biological: "Release predatory ladybird beetles (Coccinella septempunctata) or apply Azadirachtin (Neem oil 10,000 ppm) @ 2.5ml/L.",
-    followup: "Audit next cycle seed-cane nursery using tissue-culture or serologically certified virus-indexed sets."
+    immediate: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Yellow.immediate,
+    chemical: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Yellow.chemical,
+    biological: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Yellow.biological,
+    followup: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Yellow.followup
   },
   Mosaic: {
-    title: "Sugarcane Mosaic Virus (SCMV)",
-    pathogen: "Sugarcane mosaic virus (SCMV) / Potyviridae",
-    severity: "Moderate (Chlorotic Foliar Mottling)",
+    title: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Mosaic.title,
+    pathogen: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Mosaic.pathogen,
+    severity: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Mosaic.severity,
     icon: "fa-virus",
     colorClass: "verdict-mosaic",
-    immediate: "Systematically rogue out symptomatic stunted clumps during early tillering (45–60 days after germination).",
-    chemical: "Control vector aphid colonies (Rhopalosiphum maidis) with Acetamiprid 20% SP @ 0.2g/L or Dimethoate 30% EC @ 1.5ml/L.",
-    biological: "Introduce Chrysoperla carnea (Green lacewing) larvae to feed on aphid colonies.",
-    followup: "Sterilize harvest machetes and cutter blades with 10% sodium hypochlorite to prevent mechanical transmission."
+    immediate: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Mosaic.immediate,
+    chemical: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Mosaic.chemical,
+    biological: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Mosaic.biological,
+    followup: MULTILINGUAL_DISEASE_KNOWLEDGE.en.Mosaic.followup
   }
 };
 
@@ -148,12 +378,26 @@ const DOM = {
   headerLogoutBtn: document.getElementById("headerLogoutBtn"),
   footerAuthStatus: document.getElementById("footerAuthStatus"),
 
-  // Login Modal & Form
-  loginModalBackdrop: document.getElementById("loginModalBackdrop"),
+  // Login Modal & Starting Gate
+  startingLoginGate: document.getElementById("startingLoginGate"),
+  loginModalBackdrop: document.getElementById("startingLoginGate"), // fallback alias
   closeLoginModalBtn: document.getElementById("closeLoginModalBtn"),
   loginForm: document.getElementById("loginForm"),
+  loginNameInput: document.getElementById("loginNameInput"),
   loginEmailInput: document.getElementById("loginEmailInput"),
   loginPasswordInput: document.getElementById("loginPasswordInput"),
+  lblLoginName: document.getElementById("lblLoginName"),
+  lblLoginEmail: document.getElementById("lblLoginEmail"),
+  lblLoginPassword: document.getElementById("lblLoginPassword"),
+  loginGateTitle: document.getElementById("loginGateTitle"),
+  loginGateSub: document.getElementById("loginGateSub"),
+  lblLoginDivider: document.getElementById("lblLoginDivider"),
+  submitLoginBtnText: document.getElementById("submitLoginBtnText"),
+  googleSignInBtnText: document.getElementById("googleSignInBtnText"),
+  quickDemoBtnText: document.getElementById("quickDemoBtnText"),
+  loginLangEn: document.getElementById("loginLangEn"),
+  loginLangTe: document.getElementById("loginLangTe"),
+  loginLangHi: document.getElementById("loginLangHi"),
   togglePwdBtn: document.getElementById("togglePwdBtn"),
   togglePwdIcon: document.getElementById("togglePwdIcon"),
   loginFeedback: document.getElementById("loginFeedback"),
@@ -163,6 +407,30 @@ const DOM = {
   forgotPwdLink: document.getElementById("forgotPwdLink"),
   toastNotification: document.getElementById("toastNotification"),
   toastMsg: document.getElementById("toastMsg"),
+
+  // Header Language Switcher
+  headerLangEn: document.getElementById("headerLangEn"),
+  headerLangTe: document.getElementById("headerLangTe"),
+  headerLangHi: document.getElementById("headerLangHi"),
+
+  // Result Language Switcher (Right-Side Diagnosis Card)
+  resultLangBar: document.getElementById("resultLangBar"),
+  resLangEn: document.getElementById("resLangEn"),
+  resLangTe: document.getElementById("resLangTe"),
+  resLangHi: document.getElementById("resLangHi"),
+  lblResultLang: document.getElementById("lblResultLang"),
+  treatmentTitle: document.getElementById("treatmentTitle"),
+  probSectionTitle: document.getElementById("probSectionTitle"),
+  lblImmediate: document.getElementById("lblImmediate"),
+  lblChemical: document.getElementById("lblChemical"),
+  lblBiological: document.getElementById("lblBiological"),
+  lblFollowup: document.getElementById("lblFollowup"),
+  lblCtaCalc: document.getElementById("lblCtaCalc"),
+  probNameHealthy: document.getElementById("probNameHealthy"),
+  probNameRedRot: document.getElementById("probNameRedRot"),
+  probNameMosaic: document.getElementById("probNameMosaic"),
+  probNameRust: document.getElementById("probNameRust"),
+  probNameYellow: document.getElementById("probNameYellow"),
 
   // Quick Samples
   quickSamplesList: document.getElementById("quickSamplesList"),
@@ -318,7 +586,7 @@ function initAuthSession() {
       applyLoggedOutUI();
     }
   } else {
-    // Default guest session: user can browse freely, or click Sign In to authenticate
+    // Show Starting Login Gate if no active session
     applyLoggedOutUI();
   }
 
@@ -342,16 +610,23 @@ function initAuthSession() {
 }
 
 function applyLoggedInUI(user) {
+  if (DOM.startingLoginGate) {
+    DOM.startingLoginGate.classList.add("hidden");
+  }
   DOM.openLoginBtn.classList.add("hidden");
   DOM.userProfileBadge.classList.remove("hidden");
-  DOM.headerUserEmail.textContent = user.email;
-  DOM.headerUserEmail.title = user.email;
+  const displayName = user.name ? `${user.name} (${user.email})` : user.email;
+  DOM.headerUserEmail.textContent = displayName;
+  DOM.headerUserEmail.title = displayName;
   if (DOM.footerAuthStatus) {
-    DOM.footerAuthStatus.textContent = `Authenticated: ${user.email}`;
+    DOM.footerAuthStatus.textContent = `Authenticated: ${displayName}`;
   }
 }
 
 function applyLoggedOutUI() {
+  if (DOM.startingLoginGate) {
+    DOM.startingLoginGate.classList.remove("hidden");
+  }
   DOM.openLoginBtn.classList.remove("hidden");
   DOM.userProfileBadge.classList.add("hidden");
   if (DOM.footerAuthStatus) {
@@ -393,16 +668,25 @@ function initEventListeners() {
   // Login Form Submission with Firebase Auth
   DOM.loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    const name = DOM.loginNameInput ? DOM.loginNameInput.value.trim() : "";
     const email = DOM.loginEmailInput.value.trim();
     const pwd = DOM.loginPasswordInput.value;
 
+    if (!name) {
+      showLoginFeedback("Please enter your name.", false);
+      if (DOM.loginNameInput) DOM.loginNameInput.focus();
+      return;
+    }
+
     if (!validateEmail(email)) {
       showLoginFeedback("Please enter a valid Gmail address (e.g. name@gmail.com).", false);
+      DOM.loginEmailInput.focus();
       return;
     }
 
     if (pwd.length < 6) {
       showLoginFeedback("Password must be at least 6 characters long.", false);
+      DOM.loginPasswordInput.focus();
       return;
     }
 
@@ -411,13 +695,13 @@ function initEventListeners() {
     try {
       const authResult = await authenticateFirebaseEmail(email, pwd);
       if (authResult.success) {
-        performLoginSuccess(email, authResult.isNewUser ? "Firebase account created & signed in!" : "Signed in via Firebase Auth");
+        performLoginSuccess(email, name, authResult.isNewUser ? "Firebase account created & signed in!" : "Signed in via Firebase Auth");
       } else {
         console.warn("Firebase Auth Notice:", authResult.error?.message || authResult.error);
-        performLoginSuccess(email, "Authenticated as Field Agronomist");
+        performLoginSuccess(email, name, "Authenticated as Field Agronomist");
       }
     } catch (err) {
-      performLoginSuccess(email, "Authenticated as Field Agronomist");
+      performLoginSuccess(email, name, "Authenticated as Field Agronomist");
     }
   });
 
@@ -427,20 +711,21 @@ function initEventListeners() {
     try {
       const gResult = await authenticateWithGoogle();
       if (gResult.success && gResult.user) {
-        performLoginSuccess(gResult.user.email, "Google Account Verified via Firebase");
+        performLoginSuccess(gResult.user.email, gResult.user.displayName || "Google Agronomist", "Google Account Verified via Firebase");
       } else {
-        performLoginSuccess("agronomist.research@gmail.com", "Google Account Verified");
+        performLoginSuccess("agronomist.research@gmail.com", "Dr. Tarun Kumar", "Google Account Verified");
       }
     } catch (err) {
-      performLoginSuccess("agronomist.research@gmail.com", "Google Account Verified");
+      performLoginSuccess("agronomist.research@gmail.com", "Dr. Tarun Kumar", "Google Account Verified");
     }
   });
 
   // 1-Click Quick Demo Login
   DOM.quickDemoLoginBtn.addEventListener("click", () => {
+    if (DOM.loginNameInput) DOM.loginNameInput.value = "Dr. Tarun Kumar";
     DOM.loginEmailInput.value = "agronomist@gmail.com";
     DOM.loginPasswordInput.value = "GreenEye2026!";
-    performLoginSuccess("agronomist@gmail.com", "Auto-filled Agronomist Credentials");
+    performLoginSuccess("agronomist@gmail.com", "Dr. Tarun Kumar", "Auto-filled Agronomist Credentials");
   });
 
   // Header Logout with Firebase
@@ -461,16 +746,30 @@ function initEventListeners() {
     alert(`Password reset instructions have been dispatched to ${email}. (You may also use the 1-Click Demo Login to enter instantly).`);
   });
 
-  // Multilingual AI Voice Agent Controls (Telugu, Hindi, English)
-  if (DOM.langBtnEn) {
-    DOM.langBtnEn.addEventListener("click", () => setVoiceLanguage("en"));
-  }
-  if (DOM.langBtnTe) {
-    DOM.langBtnTe.addEventListener("click", () => setVoiceLanguage("te"));
-  }
-  if (DOM.langBtnHi) {
-    DOM.langBtnHi.addEventListener("click", () => setVoiceLanguage("hi"));
-  }
+  // Multilingual Controls (Top Voice Bar, Navigation Header, Login Gate, Right-Side Diagnosis Card)
+  const langTriggerMap = [
+    { el: DOM.langBtnEn, lang: "en" },
+    { el: DOM.langBtnTe, lang: "te" },
+    { el: DOM.langBtnHi, lang: "hi" },
+    { el: DOM.headerLangEn, lang: "en" },
+    { el: DOM.headerLangTe, lang: "te" },
+    { el: DOM.headerLangHi, lang: "hi" },
+    { el: DOM.loginLangEn, lang: "en" },
+    { el: DOM.loginLangTe, lang: "te" },
+    { el: DOM.loginLangHi, lang: "hi" },
+    { el: DOM.resLangEn, lang: "en" },
+    { el: DOM.resLangTe, lang: "te" },
+    { el: DOM.resLangHi, lang: "hi" },
+  ];
+  langTriggerMap.forEach(item => {
+    if (item.el) {
+      item.el.addEventListener("click", (e) => {
+        e.stopPropagation();
+        setVoiceLanguage(item.lang);
+      });
+    }
+  });
+
   if (DOM.voiceExplainBtn) {
     DOM.voiceExplainBtn.addEventListener("click", () => explainScreen(AppState.voiceLanguage));
   }
@@ -658,20 +957,29 @@ function hideLoginFeedback() {
   DOM.loginFeedback.classList.add("hidden");
 }
 
-function performLoginSuccess(email, toastNote = null) {
+function performLoginSuccess(email, customName = null, toastNote = null) {
   showLoginFeedback("Authentication successful! Welcome to GREEN-EYE.", true);
+  const enteredName = (DOM.loginNameInput && DOM.loginNameInput.value.trim()) || customName || email.split("@")[0];
   const user = {
     email: email,
-    name: email.split("@")[0],
+    name: enteredName,
     loginTime: new Date().toISOString()
   };
   AppState.currentUser = user;
   localStorage.setItem("greeneye_user", JSON.stringify(user));
 
   setTimeout(() => {
-    DOM.loginModalBackdrop.classList.add("hidden");
+    if (DOM.startingLoginGate) {
+      DOM.startingLoginGate.classList.add("hidden");
+    }
     applyLoggedInUI(user);
-    showToast(toastNote || `Authenticated as ${email}`);
+    const welcomeGreet = {
+      en: `Welcome, ${user.name}! GREEN-EYE Sugarcane Leaf Pathology AI is ready.`,
+      te: `స్వాగతం, ${user.name}! గ్రీన్-ఐ చెరకు ఆకు వ్యాధి గుర్తింపు వేదిక సిద్ధంగా ఉంది.`,
+      hi: `स्वागत है, ${user.name}! ग्रीन-आई गन्ना पत्ती रोग निदान मंच तैयार है।`
+    };
+    speakMultilingual(welcomeGreet[AppState.voiceLanguage] || welcomeGreet.en, AppState.voiceLanguage);
+    showToast(toastNote || `Authenticated as ${user.name} (${email})`);
   }, 450);
 }
 
@@ -999,8 +1307,10 @@ function computeClassProbabilities(g, r, y, t) {
   return normalized;
 }
 
-function renderDiagnosticVerdict(topClass, confidence, probs) {
-  const info = DISEASE_KNOWLEDGE[topClass];
+function renderDiagnosticVerdict(topClass, confidence, probs, lang = AppState.voiceLanguage) {
+  const langDict = (typeof MULTILINGUAL_DISEASE_KNOWLEDGE !== "undefined" && MULTILINGUAL_DISEASE_KNOWLEDGE[lang]) ? MULTILINGUAL_DISEASE_KNOWLEDGE[lang] : DISEASE_KNOWLEDGE;
+  const info = langDict[topClass] || DISEASE_KNOWLEDGE[topClass];
+  const ui = (typeof UI_LABELS !== "undefined" && UI_LABELS[lang]) ? UI_LABELS[lang] : UI_LABELS.en;
 
   // Verdict Banner
   DOM.verdictBanner.className = `verdict-banner ${info.colorClass}`;
@@ -1008,7 +1318,7 @@ function renderDiagnosticVerdict(topClass, confidence, probs) {
   DOM.verdictClassBadge.textContent = topClass.toUpperCase();
   DOM.verdictSeverityBadge.textContent = info.severity;
   DOM.verdictTitle.textContent = info.title;
-  DOM.verdictPathogen.innerHTML = `Causal Agent: <em>${info.pathogen}</em>`;
+  DOM.verdictPathogen.innerHTML = `${ui.causalAgent || 'Causal Agent'}: <em>${info.pathogen}</em>`;
   DOM.verdictScore.textContent = `${confidence}%`;
 
   // Bars
@@ -1018,7 +1328,7 @@ function renderDiagnosticVerdict(topClass, confidence, probs) {
     DOM[`bar${cls}`].style.width = `${val}%`;
   });
 
-  // Prescriptions
+  // Prescriptions in selected language
   DOM.prescImmediate.textContent = info.immediate;
   DOM.prescChemical.textContent = info.chemical;
   DOM.prescBiological.textContent = info.biological;
@@ -1485,9 +1795,10 @@ function setVoiceLanguage(lang) {
   if (!MULTILINGUAL_AGRONOMY_DATA[lang]) return;
   AppState.voiceLanguage = lang;
   const langData = MULTILINGUAL_AGRONOMY_DATA[lang];
+  const ui = (typeof UI_LABELS !== "undefined" && UI_LABELS[lang]) ? UI_LABELS[lang] : UI_LABELS.en;
 
-  // Update UI language buttons
-  document.querySelectorAll(".btn-lang").forEach(btn => {
+  // Sync active classes across ALL language buttons (top bar, header, login gate, results card)
+  document.querySelectorAll(".btn-lang, .btn-header-lang, .btn-login-lang, .btn-result-lang").forEach(btn => {
     if (btn.getAttribute("data-lang") === lang) {
       btn.classList.add("active");
     } else {
@@ -1495,26 +1806,49 @@ function setVoiceLanguage(lang) {
     }
   });
 
-  // Update header text badges
-  if (DOM.voiceCurrentLangBadge) {
-    DOM.voiceCurrentLangBadge.textContent = langData.label;
-  }
-  if (DOM.voiceSubTitleText) {
-    DOM.voiceSubTitleText.textContent = langData.subTitle;
-  }
-  if (DOM.voiceExplainBtnText) {
-    DOM.voiceExplainBtnText.textContent = langData.explainBtn;
-  }
-  if (DOM.voiceStopBtnText) {
-    DOM.voiceStopBtnText.textContent = langData.stopBtn;
-  }
+  // Update top voice bar UI
+  if (DOM.voiceCurrentLangBadge) DOM.voiceCurrentLangBadge.textContent = langData.label;
+  if (DOM.voiceSubTitleText) DOM.voiceSubTitleText.textContent = langData.subTitle;
+  if (DOM.voiceExplainBtnText) DOM.voiceExplainBtnText.textContent = langData.explainBtn;
+  if (DOM.voiceStopBtnText) DOM.voiceStopBtnText.textContent = langData.stopBtn;
   const heading = document.getElementById("voiceAgentMainHeading");
-  if (heading) {
-    heading.textContent = langData.agentTitle;
-  }
+  if (heading) heading.textContent = langData.agentTitle;
 
-  // Greet user in newly selected language
-  speakMultilingual(langData.greeting, lang);
+  // Update Login Gate labels
+  if (DOM.loginGateTitle) DOM.loginGateTitle.textContent = ui.loginTitle;
+  if (DOM.loginGateSub) DOM.loginGateSub.textContent = ui.loginSub;
+  if (DOM.lblLoginName) DOM.lblLoginName.innerHTML = `<i class="fa-solid fa-user"></i> ${ui.nameLabel}`;
+  if (DOM.lblLoginEmail) DOM.lblLoginEmail.innerHTML = `<i class="fa-solid fa-envelope"></i> ${ui.emailLabel}`;
+  if (DOM.lblLoginPassword) DOM.lblLoginPassword.innerHTML = `<i class="fa-solid fa-lock"></i> ${ui.passwordLabel}`;
+  if (DOM.submitLoginBtnText) DOM.submitLoginBtnText.textContent = ui.signInBtn;
+  if (DOM.lblLoginDivider) DOM.lblLoginDivider.textContent = ui.orDivider;
+  if (DOM.googleSignInBtnText) DOM.googleSignInBtnText.textContent = ui.googleBtn;
+  if (DOM.quickDemoBtnText) DOM.quickDemoBtnText.textContent = ui.demoBtn;
+
+  // Update Right-Side Result Card labels
+  if (DOM.lblResultLang) DOM.lblResultLang.textContent = ui.resultLang;
+  if (DOM.treatmentTitle) DOM.treatmentTitle.innerHTML = `<i class="fa-solid fa-prescription-bottle-medical"></i> ${ui.treatmentProtocol}`;
+  if (DOM.lblImmediate) DOM.lblImmediate.textContent = ui.immediate;
+  if (DOM.lblChemical) DOM.lblChemical.textContent = ui.chemical;
+  if (DOM.lblBiological) DOM.lblBiological.textContent = ui.biological;
+  if (DOM.lblFollowup) DOM.lblFollowup.textContent = ui.followup;
+  if (DOM.lblCtaCalc) DOM.lblCtaCalc.textContent = ui.launchCalculator;
+  if (DOM.probSectionTitle) DOM.probSectionTitle.textContent = ui.probSection;
+  if (DOM.probNameHealthy) DOM.probNameHealthy.textContent = ui.probHealthy;
+  if (DOM.probNameRedRot) DOM.probNameRedRot.textContent = ui.probRedRot;
+  if (DOM.probNameMosaic) DOM.probNameMosaic.textContent = ui.probMosaic;
+  if (DOM.probNameRust) DOM.probNameRust.textContent = ui.probRust;
+  if (DOM.probNameYellow) DOM.probNameYellow.textContent = ui.probYellow;
+
+  // If diagnosis is currently active, immediately re-render right-side card in chosen language and speak it
+  if (AppState.analysisData) {
+    const { topClass, confidence, probabilities } = AppState.analysisData;
+    renderDiagnosticVerdict(topClass, confidence, probabilities, lang);
+    explainCurrentDiagnosis(lang);
+  } else {
+    // Greet user in newly selected language
+    speakMultilingual(langData.greeting, lang);
+  }
 }
 
 function explainCurrentDiagnosis(lang = AppState.voiceLanguage) {

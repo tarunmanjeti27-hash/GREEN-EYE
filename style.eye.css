@@ -2621,3 +2621,183 @@ a {
     white-space: normal;
   }
 }
+
+/* ==========================================================================
+   Starting Login Page Gate & Multilingual Styles
+   ========================================================================== */
+
+/* Starting Login Page Gate Overlay */
+.starting-login-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: radial-gradient(circle at 50% 20%, rgba(6, 78, 59, 0.96), rgba(3, 15, 9, 0.98) 75%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.starting-login-gate.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.starting-login-card {
+  width: 100%;
+  max-width: 520px;
+  background: rgba(10, 25, 17, 0.96);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(16, 185, 129, 0.25);
+  overflow: hidden;
+  animation: loginCardPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  margin: auto;
+}
+
+@keyframes loginCardPop {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.login-lang-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 10px 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.82rem;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.login-lang-pills {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-login-lang {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: transparent;
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-login-lang:hover {
+  background: rgba(16, 185, 129, 0.15);
+  color: #ffffff;
+  border-color: #10b981;
+}
+
+.btn-login-lang.active {
+  background: #10b981;
+  color: #ffffff;
+  border-color: #34d399;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+/* Header Global Language Switcher */
+.header-lang-switcher {
+  display: flex;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 3px;
+  margin-right: 6px;
+}
+
+.btn-header-lang {
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-header-lang:hover {
+  color: #ffffff;
+}
+
+.btn-header-lang.active {
+  background: #10b981;
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+/* Result Language Selection Bar in Diagnosis Studio */
+.result-lang-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(6, 78, 59, 0.28);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: var(--radius-md, 8px);
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.result-lang-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #a7f3d0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.result-lang-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn-result-lang {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.4);
+  color: #e2e8f0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+}
+
+.btn-result-lang:hover {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #34d399;
+  color: #ffffff;
+}
+
+.btn-result-lang.active {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  border-color: #34d399;
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
+}

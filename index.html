@@ -122,9 +122,12 @@
         </span>
 
         <!-- Sound toggle -->
-        <button class="btn btn-sm btn-outline" id="themeToggleBtn" title="Toggle Sound Announcement">
-          <i class="fa-solid fa-volume-high" id="soundIcon"></i>
-        </button>
+        <!-- Global Header Language Switcher -->
+        <div class="header-lang-switcher" id="headerLangSwitcher" title="Select UI & Explanation Language">
+          <button type="button" class="btn-header-lang active" data-lang="en" id="headerLangEn">EN</button>
+          <button type="button" class="btn-header-lang" data-lang="te" id="headerLangTe">తెలుగు</button>
+          <button type="button" class="btn-header-lang" data-lang="hi" id="headerLangHi">हिंदी</button>
+        </div>
 
         <!-- User Authentication Header Capsule -->
         <div class="user-auth-header" id="userAuthHeader">
@@ -151,29 +154,39 @@
     </div>
   </header>
 
-  <!-- Login Modal Overlay -->
-  <div class="modal-backdrop hidden" id="loginModalBackdrop">
-    <div class="modal-dialog login-modal-card" id="loginModalCard">
+  <!-- Starting Login Page Gate Overlay -->
+  <div class="starting-login-gate" id="startingLoginGate">
+    <div class="starting-login-card" id="loginModalCard">
+      <!-- Starting Login Language Switcher -->
+      <div class="login-lang-switcher" id="loginLangSwitcher">
+        <span class="login-lang-label"><i class="fa-solid fa-language"></i> <span id="lblLoginLang">Language / భాష / भाषा:</span></span>
+        <div class="login-lang-pills">
+          <button type="button" class="btn-login-lang active" data-lang="en" id="loginLangEn">English</button>
+          <button type="button" class="btn-login-lang" data-lang="te" id="loginLangTe">తెలుగు</button>
+          <button type="button" class="btn-login-lang" data-lang="hi" id="loginLangHi">हिंदी</button>
+        </div>
+      </div>
+
       <div class="login-modal-header">
         <div class="login-brand-display">
           <div class="logo-icon-box large">
             <i class="fa-solid fa-eye"></i>
             <span class="logo-pulse"></span>
           </div>
-          <h2>Welcome to GREEN-EYE</h2>
-          <p>Precision Sugarcane Pathology & Agronomic Diagnostic Platform</p>
+          <h2 id="loginGateTitle">Welcome to GREEN-EYE</h2>
+          <p id="loginGateSub">Precision Sugarcane Pathology & Agronomic Diagnostic Platform</p>
         </div>
-        <button class="modal-close-btn" id="closeLoginModalBtn">&times;</button>
+        <button class="modal-close-btn" id="closeLoginModalBtn" title="Close / Continue to Platform">&times;</button>
       </div>
 
       <div class="login-modal-body">
         <!-- Quick 1-Click Google / Gmail Access -->
         <button type="button" class="btn btn-google btn-block" id="googleSignInBtn">
-          <i class="fa-brands fa-google text-google"></i> Continue with Google / Gmail
+          <i class="fa-brands fa-google text-google"></i> <span id="googleSignInBtnText">Continue with Google / Gmail</span>
         </button>
 
         <div class="login-divider">
-          <span>OR SIGN IN WITH EMAIL & PASSWORD</span>
+          <span id="lblLoginDivider">OR ENTER NAME, GMAIL & PASSWORD</span>
         </div>
 
         <!-- Feedback Alert Box -->
@@ -184,18 +197,28 @@
 
         <form id="loginForm" class="login-form">
           <div class="form-group">
-            <label class="form-label" for="loginEmailInput">
-              <i class="fa-solid fa-envelope"></i> Gmail / User Email
+            <label class="form-label" for="loginNameInput" id="lblLoginName">
+              <i class="fa-solid fa-user"></i> Full Name / Username
+            </label>
+            <div class="input-icon-wrap">
+              <i class="fa-solid fa-id-badge input-prefix-icon"></i>
+              <input type="text" id="loginNameInput" class="form-input with-prefix" placeholder="e.g. M Tarun Kumar or Field Agronomist" required autocomplete="name">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="loginEmailInput" id="lblLoginEmail">
+              <i class="fa-solid fa-envelope"></i> Gmail Address / Username
             </label>
             <div class="input-icon-wrap">
               <i class="fa-solid fa-at input-prefix-icon"></i>
-              <input type="email" id="loginEmailInput" class="form-input with-prefix" placeholder="e.g. agronomist@gmail.com" required autocomplete="email">
+              <input type="email" id="loginEmailInput" class="form-input with-prefix" placeholder="e.g. tarunmanjeti@gmail.com" required autocomplete="email">
             </div>
           </div>
 
           <div class="form-group">
             <div class="form-label-row">
-              <label class="form-label" for="loginPasswordInput">
+              <label class="form-label" for="loginPasswordInput" id="lblLoginPassword">
                 <i class="fa-solid fa-lock"></i> Password
               </label>
               <a href="#" class="forgot-pwd-link" id="forgotPwdLink">Forgot Password?</a>
@@ -212,25 +235,25 @@
           <div class="login-remember-row">
             <label class="checkbox-label">
               <input type="checkbox" id="rememberMeCheckbox" checked>
-              <span>Keep me signed in</span>
+              <span id="lblRememberMe">Keep me signed in</span>
             </label>
           </div>
 
           <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitLoginBtn">
-            <i class="fa-solid fa-shield-halved"></i> Authenticate & Enter GREEN-EYE
+            <i class="fa-solid fa-shield-halved"></i> <span id="submitLoginBtnText">Authenticate & Enter GREEN-EYE</span>
           </button>
         </form>
 
         <!-- Quick 1-Click Demo Fill Button -->
         <div class="demo-login-box">
           <button type="button" class="btn btn-secondary btn-block btn-sm" id="quickDemoLoginBtn">
-            <i class="fa-solid fa-bolt text-yellow"></i> 1-Click Demo Login (Auto-fill agronomist@gmail.com)
+            <i class="fa-solid fa-bolt text-yellow"></i> <span id="quickDemoBtnText">1-Click Quick Demo Login (Tarun Kumar / agronomist@gmail.com)</span>
           </button>
         </div>
       </div>
 
       <div class="login-modal-footer">
-        <p><i class="fa-solid fa-lock text-green"></i> Encrypted Session: Any valid <strong>@gmail.com</strong> or agronomist credentials accepted.</p>
+        <p><i class="fa-solid fa-lock text-green"></i> <span id="lblLoginFooter">Encrypted Session: Any valid <strong>@gmail.com</strong> or agronomist credentials accepted.</span></p>
       </div>
     </div>
   </div>
@@ -470,6 +493,24 @@
 
           <!-- Populated Results State -->
           <div class="diagnosis-result-content hidden" id="diagnosisResultContent">
+            <!-- Result Language Selection Bar -->
+            <div class="result-lang-bar" id="resultLangBar">
+              <div class="result-lang-label">
+                <i class="fa-solid fa-language"></i> <span id="lblResultLang">Result Language / ఫలితాల భాష / परिणाम भाषा:</span>
+              </div>
+              <div class="result-lang-pills">
+                <button type="button" class="btn-result-lang active" data-lang="en" id="resLangEn">
+                  🇬🇧 English
+                </button>
+                <button type="button" class="btn-result-lang" data-lang="te" id="resLangTe">
+                  🇮🇳 తెలుగు (Telugu)
+                </button>
+                <button type="button" class="btn-result-lang" data-lang="hi" id="resLangHi">
+                  🇮🇳 हिंदी (Hindi)
+                </button>
+              </div>
+            </div>
+
             <!-- Verdict Hero Box -->
             <div class="verdict-banner" id="verdictBanner">
               <div class="verdict-icon" id="verdictIcon">
@@ -486,18 +527,18 @@
               <div class="verdict-score-box">
                 <div class="score-circle">
                   <span class="score-number" id="verdictScore">96.8%</span>
-                  <span class="score-label">Confidence</span>
+                  <span class="score-label" id="lblConfidence">Confidence</span>
                 </div>
               </div>
             </div>
 
             <!-- Probability Distribution Bars -->
             <div class="probabilities-section">
-              <h4 class="prob-title"><i class="fa-solid fa-chart-column"></i> Multi-Class Probability Distribution</h4>
+              <h4 class="prob-title" id="probSectionTitle"><i class="fa-solid fa-chart-column"></i> Multi-Class Probability Distribution</h4>
               
               <div class="prob-row" data-cls="Healthy">
                 <div class="prob-meta">
-                  <span class="prob-name"><i class="fa-solid fa-circle-check text-green"></i> Healthy Sugarcane</span>
+                  <span class="prob-name" id="probNameHealthy"><i class="fa-solid fa-circle-check text-green"></i> Healthy Sugarcane</span>
                   <span class="prob-percent" id="probHealthy">1.2%</span>
                 </div>
                 <div class="prob-bar-track">
@@ -507,7 +548,7 @@
 
               <div class="prob-row" data-cls="RedRot">
                 <div class="prob-meta">
-                  <span class="prob-name"><i class="fa-solid fa-biohazard text-red"></i> Red Rot (Colletotrichum)</span>
+                  <span class="prob-name" id="probNameRedRot"><i class="fa-solid fa-biohazard text-red"></i> Red Rot (Colletotrichum)</span>
                   <span class="prob-percent" id="probRedRot">96.8%</span>
                 </div>
                 <div class="prob-bar-track">
@@ -517,7 +558,7 @@
 
               <div class="prob-row" data-cls="Mosaic">
                 <div class="prob-meta">
-                  <span class="prob-name"><i class="fa-solid fa-virus text-teal"></i> Mosaic Virus (SCMV)</span>
+                  <span class="prob-name" id="probNameMosaic"><i class="fa-solid fa-virus text-teal"></i> Mosaic Virus (SCMV)</span>
                   <span class="prob-percent" id="probMosaic">1.1%</span>
                 </div>
                 <div class="prob-bar-track">
@@ -527,7 +568,7 @@
 
               <div class="prob-row" data-cls="Rust">
                 <div class="prob-meta">
-                  <span class="prob-name"><i class="fa-solid fa-burst text-orange"></i> Leaf Rust (Puccinia)</span>
+                  <span class="prob-name" id="probNameRust"><i class="fa-solid fa-burst text-orange"></i> Leaf Rust (Puccinia)</span>
                   <span class="prob-percent" id="probRust">0.5%</span>
                 </div>
                 <div class="prob-bar-track">
@@ -537,7 +578,7 @@
 
               <div class="prob-row" data-cls="Yellow">
                 <div class="prob-meta">
-                  <span class="prob-name"><i class="fa-solid fa-sun text-yellow"></i> Yellow Leaf Disease (SCYLV)</span>
+                  <span class="prob-name" id="probNameYellow"><i class="fa-solid fa-sun text-yellow"></i> Yellow Leaf Disease (SCYLV)</span>
                   <span class="prob-percent" id="probYellow">0.4%</span>
                 </div>
                 <div class="prob-bar-track">
@@ -548,13 +589,13 @@
 
             <!-- Agronomic Treatment & Action Protocol -->
             <div class="treatment-recommendation-box" id="treatmentBox">
-              <h4 class="treatment-title"><i class="fa-solid fa-stethoscope"></i> Clinical Agronomic Prescription</h4>
+              <h4 class="treatment-title" id="treatmentTitle"><i class="fa-solid fa-stethoscope"></i> Clinical Agronomic Prescription</h4>
               
               <div class="treatment-grid">
                 <div class="treatment-item priority-action">
                   <div class="treatment-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
                   <div class="treatment-details">
-                    <span class="treatment-label">Immediate Action</span>
+                    <span class="treatment-label" id="lblImmediate">Immediate Action</span>
                     <p class="treatment-text" id="prescImmediate">Rogue out and incinerate heavily infected clumps. Avoid waterlogging in the field.</p>
                   </div>
                 </div>
@@ -562,7 +603,7 @@
                 <div class="treatment-item">
                   <div class="treatment-icon"><i class="fa-solid fa-bottle-droplet"></i></div>
                   <div class="treatment-details">
-                    <span class="treatment-label">Chemical Treatment</span>
+                    <span class="treatment-label" id="lblChemical">Chemical Treatment</span>
                     <p class="treatment-text" id="prescChemical">Foliar spray with Carbendazim 50% WP @ 2g/L or Thiophanate Methyl 70% WP @ 1.5g/L.</p>
                   </div>
                 </div>
@@ -570,7 +611,7 @@
                 <div class="treatment-item">
                   <div class="treatment-icon"><i class="fa-solid fa-shield-halved"></i></div>
                   <div class="treatment-details">
-                    <span class="treatment-label">Cultural & Biocontrol</span>
+                    <span class="treatment-label" id="lblBiological">Cultural & Biocontrol</span>
                     <p class="treatment-text" id="prescBiological">Treat seed sets with <em>Trichoderma harzianum</em> bio-fungicide @ 10g/L before planting.</p>
                   </div>
                 </div>
@@ -578,7 +619,7 @@
                 <div class="treatment-item">
                   <div class="treatment-icon"><i class="fa-solid fa-calendar-check"></i></div>
                   <div class="treatment-details">
-                    <span class="treatment-label">Follow-up Schedule</span>
+                    <span class="treatment-label" id="lblFollowup">Follow-up Schedule</span>
                     <p class="treatment-text" id="prescFollowup">Re-inspect field after 14 days. Repeat spray if weather remains humid and overcast.</p>
                   </div>
                 </div>
@@ -586,7 +627,7 @@
 
               <div class="treatment-cta-row">
                 <a href="#calculator" class="btn btn-sm btn-secondary" id="launchCalcWithDiseaseBtn">
-                  <i class="fa-solid fa-calculator"></i> Calculate Chemical Dosage for your Acreage
+                  <i class="fa-solid fa-calculator"></i> <span id="lblCtaCalc">Calculate Chemical Dosage for your Acreage</span>
                 </a>
               </div>
 
