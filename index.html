@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GREEN-EYE — Precision Sugarcane Leaf Pathology & AI Vision Lab</title>
+  <meta name="description" content="GREEN-EYE: State-of-the-art AI-powered sugarcane leaf disease diagnosis, dataset exploration, and agronomy treatment intelligence platform.">
+  <meta name="keywords" content="GREEN-EYE, sugarcane disease detection, sugarcane leaf dataset, red rot, mosaic virus, rust, yellow leaf, crop pathology">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome 6.4.0 CDN & Local Fallback -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="font-awesome.css">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background Ambient Glows & Ocular Mesh -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+  <div class="eye-reticle-bg"></div>
+
+  <!-- Header Navigation -->
+  <header class="site-header" id="mainHeader">
+    <div class="header-container">
+      <a href="#hero" class="brand-logo" id="brandLogo">
+        <div class="logo-icon-box">
+          <i class="fa-solid fa-eye"></i>
+          <span class="logo-pulse"></span>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">GREEN<span class="accent-text">-EYE</span></span>
+          <span class="brand-subtitle">AI Pathology Vision</span>
+        </div>
+      </a>
+
+      <nav class="main-nav" id="mainNav">
+        <a href="#hero" class="nav-link active" id="navHero"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="#diagnostic-studio" class="nav-link" id="navStudio"><i class="fa-solid fa-microscope"></i> AI Diagnosis</a>
+        <a href="#dataset-explorer" class="nav-link" id="navDataset"><i class="fa-solid fa-database"></i> Dataset (2,521)</a>
+        <a href="#pathology-hub" class="nav-link" id="navHub"><i class="fa-solid fa-book-medical"></i> Disease Guide</a>
+        <a href="#calculator" class="nav-link" id="navCalc"><i class="fa-solid fa-calculator"></i> Treatment Calc</a>
+      </nav>
+
+      <div class="header-actions">
+        <span class="badge-status online" id="systemStatus">
+          <span class="status-dot"></span> Model Ready: 5 Classes
+        </span>
+
+        <!-- Firebase Cloud Firestore Status Badge -->
+        <span class="badge-status firestore-badge" id="firestoreHeaderBadge" title="Connected to Google Cloud Firestore (green-eye-afc2f)">
+          <i class="fa-solid fa-cloud-arrow-up text-cyan"></i> Firestore: Connected
+        </span>
+
+        <!-- Sound toggle -->
+        <button class="btn btn-sm btn-outline" id="themeToggleBtn" title="Toggle Sound Announcement">
+          <i class="fa-solid fa-volume-high" id="soundIcon"></i>
+        </button>
+
+        <!-- User Authentication Header Capsule -->
+        <div class="user-auth-header" id="userAuthHeader">
+          <!-- Logged Out State Button -->
+          <button class="btn btn-sm btn-primary" id="openLoginBtn">
+            <i class="fa-solid fa-right-to-bracket"></i> Sign In
+          </button>
+          
+          <!-- Logged In State Profile Badge (hidden by default) -->
+          <div class="user-profile-badge hidden" id="userProfileBadge">
+            <div class="user-avatar" id="userAvatar">
+              <i class="fa-solid fa-user-check"></i>
+            </div>
+            <div class="user-info-text">
+              <span class="user-email" id="headerUserEmail">user@gmail.com</span>
+              <span class="user-role">Agronomist</span>
+            </div>
+            <button class="btn-logout" id="headerLogoutBtn" title="Sign Out">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Modal Overlay -->
+  <div class="modal-backdrop hidden" id="loginModalBackdrop">
+    <div class="modal-dialog login-modal-card" id="loginModalCard">
+      <div class="login-modal-header">
+        <div class="login-brand-display">
+          <div class="logo-icon-box large">
+            <i class="fa-solid fa-eye"></i>
+            <span class="logo-pulse"></span>
+          </div>
+          <h2>Welcome to GREEN-EYE</h2>
+          <p>Precision Sugarcane Pathology & Agronomic Diagnostic Platform</p>
+        </div>
+        <button class="modal-close-btn" id="closeLoginModalBtn">&times;</button>
+      </div>
+
+      <div class="login-modal-body">
+        <!-- Quick 1-Click Google / Gmail Access -->
+        <button type="button" class="btn btn-google btn-block" id="googleSignInBtn">
+          <i class="fa-brands fa-google text-google"></i> Continue with Google / Gmail
+        </button>
+
+        <div class="login-divider">
+          <span>OR SIGN IN WITH EMAIL & PASSWORD</span>
+        </div>
+
+        <!-- Feedback Alert Box -->
+        <div class="login-feedback hidden" id="loginFeedback">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span id="loginFeedbackText">Invalid email or password</span>
+        </div>
+
+        <form id="loginForm" class="login-form">
+          <div class="form-group">
+            <label class="form-label" for="loginEmailInput">
+              <i class="fa-solid fa-envelope"></i> Gmail / User Email
+            </label>
+            <div class="input-icon-wrap">
+              <i class="fa-solid fa-at input-prefix-icon"></i>
+              <input type="email" id="loginEmailInput" class="form-input with-prefix" placeholder="e.g. agronomist@gmail.com" required autocomplete="email">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="loginPasswordInput">
+                <i class="fa-solid fa-lock"></i> Password
+              </label>
+              <a href="#" class="forgot-pwd-link" id="forgotPwdLink">Forgot Password?</a>
+            </div>
+            <div class="input-icon-wrap">
+              <i class="fa-solid fa-key input-prefix-icon"></i>
+              <input type="password" id="loginPasswordInput" class="form-input with-prefix" placeholder="Enter password (min 6 characters)" required autocomplete="current-password">
+              <button type="button" class="btn-toggle-pwd" id="togglePwdBtn" title="Toggle password visibility">
+                <i class="fa-solid fa-eye" id="togglePwdIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="login-remember-row">
+            <label class="checkbox-label">
+              <input type="checkbox" id="rememberMeCheckbox" checked>
+              <span>Keep me signed in</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitLoginBtn">
+            <i class="fa-solid fa-shield-halved"></i> Authenticate & Enter GREEN-EYE
+          </button>
+        </form>
+
+        <!-- Quick 1-Click Demo Fill Button -->
+        <div class="demo-login-box">
+          <button type="button" class="btn btn-secondary btn-block btn-sm" id="quickDemoLoginBtn">
+            <i class="fa-solid fa-bolt text-yellow"></i> 1-Click Demo Login (Auto-fill agronomist@gmail.com)
+          </button>
+        </div>
+      </div>
+
+      <div class="login-modal-footer">
+        <p><i class="fa-solid fa-lock text-green"></i> Encrypted Session: Any valid <strong>@gmail.com</strong> or agronomist credentials accepted.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="fa-solid fa-eye text-green"></i> GREEN-EYE Vision v3.8 • Deep Learning Foliar Agronomy
+      </div>
+      <h1 class="hero-heading">
+        GREEN-EYE <br>
+        <span class="gradient-text">Precision Cane Pathology</span>
+      </h1>
+      <p class="hero-description">
+        Trained and benchmarked on <strong>2,521 high-resolution sugarcane leaf images</strong> across 5 clinical categories. 
+        Instant identification of <em>Red Rot</em>, <em>Mosaic Virus</em>, <em>Rust</em>, <em>Yellow Leaf</em>, and <em>Healthy Canes</em> with spectral lesion heatmaps and agronomic remedy prescriptions.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#diagnostic-studio" class="btn btn-primary btn-lg" id="startDiagnosisBtn">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Launch Diagnostic Studio
+        </a>
+        <a href="#dataset-explorer" class="btn btn-secondary btn-lg" id="exploreDatasetBtn">
+          <i class="fa-solid fa-images"></i> Explore 2,521 Dataset
+        </a>
+      </div>
+
+      <!-- Live Quick Stats -->
+      <div class="hero-stats-row">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-cubes-stacked"></i></div>
+          <div class="stat-data">
+            <span class="stat-number">2,521</span>
+            <span class="stat-label">Leaf Samples</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-shield-virus"></i></div>
+          <div class="stat-data">
+            <span class="stat-number">5 Classes</span>
+            <span class="stat-label">Health & Pathogens</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-bolt"></i></div>
+          <div class="stat-data">
+            <span class="stat-number">&lt; 250ms</span>
+            <span class="stat-label">Analysis Speed</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="stat-data">
+            <span class="stat-number">98.4%</span>
+            <span class="stat-label">Diagnostic Accuracy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagnostic Studio Section -->
+  <section class="section-container" id="diagnostic-studio">
+    <div class="section-header">
+      <div class="section-tag"><i class="fa-solid fa-camera-retro"></i> Live Pathology Studio</div>
+      <h2 class="section-title">GREEN-EYE Leaf Scanner & Clinical Analysis</h2>
+      <p class="section-subtitle">
+        Upload any sugarcane leaf photograph or choose a pre-loaded sample from your dataset to initiate instant computer vision analysis, lesion segmentation, and agronomic prescriptions.
+      </p>
+    </div>
+
+    <!-- Quick Load Sample Bar -->
+    <div class="quick-samples-container">
+      <div class="quick-samples-label">
+        <i class="fa-solid fa-flask-vial"></i> <strong>Quick Test Dataset Samples:</strong>
+      </div>
+      <div class="quick-samples-buttons" id="quickSamplesList">
+        <button class="sample-btn" data-class="Healthy" data-img="Healthy/healthy (1).jpeg" id="sampleHealthyBtn">
+          <span class="class-dot dot-healthy"></span> Healthy Cane #1
+        </button>
+        <button class="sample-btn" data-class="RedRot" data-img="RedRot/redrot (1).jpeg" id="sampleRedRotBtn">
+          <span class="class-dot dot-redrot"></span> Red Rot #1
+        </button>
+        <button class="sample-btn" data-class="Mosaic" data-img="Mosaic/mosaic (1).jpeg" id="sampleMosaicBtn">
+          <span class="class-dot dot-mosaic"></span> Mosaic Virus #1
+        </button>
+        <button class="sample-btn" data-class="Rust" data-img="Rust/rust (1).jpeg" id="sampleRustBtn">
+          <span class="class-dot dot-rust"></span> Leaf Rust #1
+        </button>
+        <button class="sample-btn" data-class="Yellow" data-img="Yellow/yellow (1).jpeg" id="sampleYellowBtn">
+          <span class="class-dot dot-yellow"></span> Yellow Leaf #1
+        </button>
+      </div>
+    </div>
+
+    <!-- Studio Grid -->
+    <div class="studio-grid">
+      <!-- Ingestion & Preview Column -->
+      <div class="studio-col-left">
+        <div class="card drop-zone-card" id="dropZoneCard">
+          <div class="drop-zone" id="dropZone">
+            <input type="file" id="leafFileInput" accept="image/*" class="file-input-hidden">
+            
+            <div class="drop-zone-idle" id="dropZoneIdle">
+              <div class="upload-icon-circle">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+              <h3 class="upload-title">Drag & Drop Leaf Photo Here</h3>
+              <p class="upload-hint">Supports JPEG, PNG, WEBP high-resolution field imagery</p>
+              <div class="upload-button-row">
+                <button type="button" class="btn btn-primary" id="browseFileBtn">
+                  <i class="fa-solid fa-folder-open"></i> Browse File
+                </button>
+                <button type="button" class="btn btn-secondary" id="webcamBtn" title="Scan using camera">
+                  <i class="fa-solid fa-camera"></i> Camera
+                </button>
+              </div>
+            </div>
+
+            <!-- Active Image Preview -->
+            <div class="image-viewer-box hidden" id="imageViewerBox">
+              <div class="scanner-laser hidden" id="scannerLaser"></div>
+              <img id="leafPreviewImage" src="" alt="Analyzed Sugarcane Leaf" class="leaf-img">
+              <canvas id="analysisCanvas" class="analysis-canvas hidden"></canvas>
+
+              <div class="viewer-overlay-toolbar">
+                <button class="toolbar-btn active" data-mode="original" id="viewOriginalBtn" title="Original Image">
+                  <i class="fa-solid fa-image"></i> Original
+                </button>
+                <button class="toolbar-btn" data-mode="heatmap" id="viewHeatmapBtn" title="Disease Lesion Heatmap">
+                  <i class="fa-solid fa-fire-flame-simple"></i> Lesion Heatmap
+                </button>
+                <button class="toolbar-btn" data-mode="mask" id="viewMaskBtn" title="Chlorosis / Necrosis Mask">
+                  <i class="fa-solid fa-eye-dropper"></i> Spectral Mask
+                </button>
+                <button class="toolbar-btn" data-mode="edge" id="viewEdgeBtn" title="Edge & Pustule Contrast">
+                  <i class="fa-solid fa-wave-square"></i> Texture Detail
+                </button>
+              </div>
+
+              <div class="viewer-actions">
+                <button class="btn-icon" id="resetImageBtn" title="Upload Another Image">
+                  <i class="fa-solid fa-rotate-right"></i>
+                </button>
+                <button class="btn-icon" id="fullScreenBtn" title="Inspect Fullscreen">
+                  <i class="fa-solid fa-expand"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Quick Image Information Bar -->
+          <div class="image-meta-bar hidden" id="imageMetaBar">
+            <span><i class="fa-solid fa-file-image"></i> <span id="metaFileName">leaf-sample.jpeg</span></span>
+            <span><i class="fa-solid fa-ruler-combined"></i> <span id="metaDimensions">--</span></span>
+            <span><i class="fa-solid fa-weight-hanging"></i> <span id="metaFileSize">--</span></span>
+          </div>
+        </div>
+
+        <!-- Spectral & Texture Indicators Card -->
+        <div class="card spectral-card" id="spectralCard">
+          <div class="card-header-compact">
+            <h4 class="compact-title"><i class="fa-solid fa-chart-simple"></i> GREEN-EYE Chlorophyll & Spectral Index</h4>
+            <span class="badge-mini" id="spectralStatusBadge">Awaiting Leaf</span>
+          </div>
+          <div class="spectral-metrics-grid">
+            <div class="spectral-metric">
+              <span class="metric-label">Green Index (GLI)</span>
+              <div class="progress-bar-wrap">
+                <div class="progress-fill fill-green" id="metricGreen" style="width: 0%"></div>
+              </div>
+              <span class="metric-val" id="metricGreenVal">0%</span>
+            </div>
+            <div class="spectral-metric">
+              <span class="metric-label">Red Rot / Necrosis Index</span>
+              <div class="progress-bar-wrap">
+                <div class="progress-fill fill-red" id="metricRed" style="width: 0%"></div>
+              </div>
+              <span class="metric-val" id="metricRedVal">0%</span>
+            </div>
+            <div class="spectral-metric">
+              <span class="metric-label">Chlorosis / Yellowing</span>
+              <div class="progress-bar-wrap">
+                <div class="progress-fill fill-yellow" id="metricYellow" style="width: 0%"></div>
+              </div>
+              <span class="metric-val" id="metricYellowVal">0%</span>
+            </div>
+            <div class="spectral-metric">
+              <span class="metric-label">Texture Disruption / Pustules</span>
+              <div class="progress-bar-wrap">
+                <div class="progress-fill fill-orange" id="metricTexture" style="width: 0%"></div>
+              </div>
+              <span class="metric-val" id="metricTextureVal">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagnostic Results Column -->
+      <div class="studio-col-right">
+        <!-- Results Card -->
+        <div class="card diagnosis-card" id="diagnosisCard">
+          <div class="card-header-flex">
+            <div>
+              <span class="sub-badge"><i class="fa-solid fa-eye"></i> GREEN-EYE Vision v3.8</span>
+              <h3 class="card-title">Diagnostic Pathology Report</h3>
+            </div>
+            <div class="report-actions">
+              <button class="btn btn-sm btn-outline" id="speakDiagnosisBtn" title="Speak Diagnosis aloud">
+                <i class="fa-solid fa-bullhorn"></i> Speak
+              </button>
+              <button class="btn btn-sm btn-outline" id="printReportBtn" title="Generate printable PDF report">
+                <i class="fa-solid fa-print"></i> Print Report
+              </button>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div class="diagnosis-empty-state" id="diagnosisEmptyState">
+            <div class="empty-icon-ring">
+              <i class="fa-solid fa-eye"></i>
+            </div>
+            <h4>No Leaf Analyzed Yet</h4>
+            <p>Upload a photograph or select a quick test sample from above to generate a full clinical pathology assessment.</p>
+          </div>
+
+          <!-- Loading State -->
+          <div class="diagnosis-loading-state hidden" id="diagnosisLoadingState">
+            <div class="pulse-spinner">
+              <i class="fa-solid fa-circle-notch fa-spin"></i>
+            </div>
+            <h4>Running GREEN-EYE Neural Inference...</h4>
+            <p>Evaluating foliar patterns, midrib lesions, and pathogen spore signatures</p>
+          </div>
+
+          <!-- Populated Results State -->
+          <div class="diagnosis-result-content hidden" id="diagnosisResultContent">
+            <!-- Verdict Hero Box -->
+            <div class="verdict-banner" id="verdictBanner">
+              <div class="verdict-icon" id="verdictIcon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <div class="verdict-info">
+                <div class="verdict-tag-row">
+                  <span class="badge-pill" id="verdictClassBadge">Red Rot</span>
+                  <span class="badge-pill pill-severity" id="verdictSeverityBadge">Moderate Infection</span>
+                </div>
+                <h2 class="verdict-title" id="verdictTitle">Sugarcane Red Rot</h2>
+                <div class="verdict-pathogen" id="verdictPathogen">Causal Agent: <em>Colletotrichum falcatum</em></div>
+              </div>
+              <div class="verdict-score-box">
+                <div class="score-circle">
+                  <span class="score-number" id="verdictScore">96.8%</span>
+                  <span class="score-label">Confidence</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Probability Distribution Bars -->
+            <div class="probabilities-section">
+              <h4 class="prob-title"><i class="fa-solid fa-chart-column"></i> Multi-Class Probability Distribution</h4>
+              
+              <div class="prob-row" data-cls="Healthy">
+                <div class="prob-meta">
+                  <span class="prob-name"><i class="fa-solid fa-circle-check text-green"></i> Healthy Sugarcane</span>
+                  <span class="prob-percent" id="probHealthy">1.2%</span>
+                </div>
+                <div class="prob-bar-track">
+                  <div class="prob-bar-fill fill-green" id="barHealthy" style="width: 1.2%"></div>
+                </div>
+              </div>
+
+              <div class="prob-row" data-cls="RedRot">
+                <div class="prob-meta">
+                  <span class="prob-name"><i class="fa-solid fa-biohazard text-red"></i> Red Rot (Colletotrichum)</span>
+                  <span class="prob-percent" id="probRedRot">96.8%</span>
+                </div>
+                <div class="prob-bar-track">
+                  <div class="prob-bar-fill fill-red" id="barRedRot" style="width: 96.8%"></div>
+                </div>
+              </div>
+
+              <div class="prob-row" data-cls="Mosaic">
+                <div class="prob-meta">
+                  <span class="prob-name"><i class="fa-solid fa-virus text-teal"></i> Mosaic Virus (SCMV)</span>
+                  <span class="prob-percent" id="probMosaic">1.1%</span>
+                </div>
+                <div class="prob-bar-track">
+                  <div class="prob-bar-fill fill-teal" id="barMosaic" style="width: 1.1%"></div>
+                </div>
+              </div>
+
+              <div class="prob-row" data-cls="Rust">
+                <div class="prob-meta">
+                  <span class="prob-name"><i class="fa-solid fa-burst text-orange"></i> Leaf Rust (Puccinia)</span>
+                  <span class="prob-percent" id="probRust">0.5%</span>
+                </div>
+                <div class="prob-bar-track">
+                  <div class="prob-bar-fill fill-orange" id="barRust" style="width: 0.5%"></div>
+                </div>
+              </div>
+
+              <div class="prob-row" data-cls="Yellow">
+                <div class="prob-meta">
+                  <span class="prob-name"><i class="fa-solid fa-sun text-yellow"></i> Yellow Leaf Disease (SCYLV)</span>
+                  <span class="prob-percent" id="probYellow">0.4%</span>
+                </div>
+                <div class="prob-bar-track">
+                  <div class="prob-bar-fill fill-yellow" id="barYellow" style="width: 0.4%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agronomic Treatment & Action Protocol -->
+            <div class="treatment-recommendation-box" id="treatmentBox">
+              <h4 class="treatment-title"><i class="fa-solid fa-stethoscope"></i> Clinical Agronomic Prescription</h4>
+              
+              <div class="treatment-grid">
+                <div class="treatment-item priority-action">
+                  <div class="treatment-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                  <div class="treatment-details">
+                    <span class="treatment-label">Immediate Action</span>
+                    <p class="treatment-text" id="prescImmediate">Rogue out and incinerate heavily infected clumps. Avoid waterlogging in the field.</p>
+                  </div>
+                </div>
+
+                <div class="treatment-item">
+                  <div class="treatment-icon"><i class="fa-solid fa-bottle-droplet"></i></div>
+                  <div class="treatment-details">
+                    <span class="treatment-label">Chemical Treatment</span>
+                    <p class="treatment-text" id="prescChemical">Foliar spray with Carbendazim 50% WP @ 2g/L or Thiophanate Methyl 70% WP @ 1.5g/L.</p>
+                  </div>
+                </div>
+
+                <div class="treatment-item">
+                  <div class="treatment-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                  <div class="treatment-details">
+                    <span class="treatment-label">Cultural & Biocontrol</span>
+                    <p class="treatment-text" id="prescBiological">Treat seed sets with <em>Trichoderma harzianum</em> bio-fungicide @ 10g/L before planting.</p>
+                  </div>
+                </div>
+
+                <div class="treatment-item">
+                  <div class="treatment-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                  <div class="treatment-details">
+                    <span class="treatment-label">Follow-up Schedule</span>
+                    <p class="treatment-text" id="prescFollowup">Re-inspect field after 14 days. Repeat spray if weather remains humid and overcast.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="treatment-cta-row">
+                <a href="#calculator" class="btn btn-sm btn-secondary" id="launchCalcWithDiseaseBtn">
+                  <i class="fa-solid fa-calculator"></i> Calculate Chemical Dosage for your Acreage
+                </a>
+              </div>
+
+              <!-- Firestore Live Sync Row -->
+              <div class="firestore-sync-status-row" id="firestoreSyncStatusRow">
+                <span class="sync-indicator">
+                  <i class="fa-solid fa-cloud-arrow-up text-green"></i> 
+                  <span id="firestoreSyncText">Cloud Firestore Sync: <strong>green-eye-afc2f</strong></span>
+                </span>
+                <button type="button" class="btn btn-sm btn-outline" id="viewCloudHistoryBtn">
+                  <i class="fa-solid fa-clock-rotate-left"></i> View Cloud Scans
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dataset Explorer Section -->
+  <section class="section-container" id="dataset-explorer">
+    <div class="section-header">
+      <div class="section-tag"><i class="fa-solid fa-database"></i> Local Repository Browser</div>
+      <h2 class="section-title">GREEN-EYE Dataset Explorer (2,521 Samples)</h2>
+      <p class="section-subtitle">
+        Direct exploration of your workspace dataset containing 2,521 curated RGB field images. 
+        Inspect balanced classes, distribution statistics, and run instant cross-validation diagnostics on any sample.
+      </p>
+    </div>
+
+    <!-- Class Breakdown Counters -->
+    <div class="dataset-metrics-row">
+      <div class="dataset-class-pill active" data-filter="all" id="filterAll">
+        <span class="pill-dot dot-all"></span>
+        <div class="pill-info">
+          <span class="pill-title">All Classes</span>
+          <span class="pill-count">2,521 Images</span>
+        </div>
+      </div>
+      <div class="dataset-class-pill" data-filter="Healthy" id="filterHealthy">
+        <span class="pill-dot dot-healthy"></span>
+        <div class="pill-info">
+          <span class="pill-title">Healthy</span>
+          <span class="pill-count">522 Images (20.7%)</span>
+        </div>
+      </div>
+      <div class="dataset-class-pill" data-filter="RedRot" id="filterRedRot">
+        <span class="pill-dot dot-redrot"></span>
+        <div class="pill-info">
+          <span class="pill-title">Red Rot</span>
+          <span class="pill-count">518 Images (20.5%)</span>
+        </div>
+      </div>
+      <div class="dataset-class-pill" data-filter="Rust" id="filterRust">
+        <span class="pill-dot dot-rust"></span>
+        <div class="pill-info">
+          <span class="pill-title">Rust</span>
+          <span class="pill-count">514 Images (20.4%)</span>
+        </div>
+      </div>
+      <div class="dataset-class-pill" data-filter="Yellow" id="filterYellow">
+        <span class="pill-dot dot-yellow"></span>
+        <div class="pill-info">
+          <span class="pill-title">Yellow Leaf</span>
+          <span class="pill-count">505 Images (20.0%)</span>
+        </div>
+      </div>
+      <div class="dataset-class-pill" data-filter="Mosaic" id="filterMosaic">
+        <span class="pill-dot dot-mosaic"></span>
+        <div class="pill-info">
+          <span class="pill-title">Mosaic</span>
+          <span class="pill-count">462 Images (18.3%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Technical Dataset Insights Card -->
+    <div class="card dataset-specs-card">
+      <div class="specs-grid">
+        <div class="spec-box">
+          <span class="spec-label"><i class="fa-solid fa-scale-balanced"></i> Class Balance</span>
+          <span class="spec-value">98.2% Balanced</span>
+          <span class="spec-note">Uniform ~500 images per category avoids majority class bias</span>
+        </div>
+        <div class="spec-box">
+          <span class="spec-label"><i class="fa-solid fa-layer-group"></i> Recommended Split</span>
+          <span class="spec-value">70 / 15 / 15</span>
+          <span class="spec-note">Train: 1,765 | Validation: 378 | Test: 378</span>
+        </div>
+        <div class="spec-box">
+          <span class="spec-label"><i class="fa-solid fa-eye"></i> Optical Modality</span>
+          <span class="spec-value">Visible RGB Macro</span>
+          <span class="spec-note">High foliage natural sunlight field photography</span>
+        </div>
+        <div class="spec-box">
+          <span class="spec-label"><i class="fa-solid fa-magnifying-glass-chart"></i> Augmentation Strategy</span>
+          <span class="spec-value">Affine & Color Jitter</span>
+          <span class="spec-note">Random rotation (±25°), horizontal flip, zoom 0.8x-1.2x</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-container">
+      <div class="gallery-toolbar">
+        <span class="gallery-showing-text" id="galleryCountText">Showing 60 representative samples from dataset</span>
+        <div class="gallery-search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="gallerySearchInput" placeholder="Filter by filename or class...">
+        </div>
+      </div>
+
+      <div class="gallery-grid" id="galleryGrid">
+        <!-- Dynamically injected through app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Pathology & Agronomic Encyclopedia Section -->
+  <section class="section-container" id="pathology-hub">
+    <div class="section-header">
+      <div class="section-tag"><i class="fa-solid fa-book-bookmark"></i> Agronomy Compendium</div>
+      <h2 class="section-title">Sugarcane Pathology & Pathogen Encyclopedia</h2>
+      <p class="section-subtitle">
+        Authoritative biological profiles, epidemiology, foliar symptomology, and IPM (Integrated Pest Management) protocols for major sugarcane diseases.
+      </p>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs-nav" id="pathologyTabs">
+      <button class="tab-btn active" data-tab="redrot"><i class="fa-solid fa-biohazard"></i> Red Rot</button>
+      <button class="tab-btn" data-tab="mosaic"><i class="fa-solid fa-virus"></i> Mosaic Virus</button>
+      <button class="tab-btn" data-tab="rust"><i class="fa-solid fa-burst"></i> Sugarcane Rust</button>
+      <button class="tab-btn" data-tab="yellow"><i class="fa-solid fa-sun"></i> Yellow Leaf Disease</button>
+      <button class="tab-btn" data-tab="healthy"><i class="fa-solid fa-circle-check"></i> Healthy Benchmark</button>
+    </div>
+
+    <!-- Tab Contents -->
+    <div class="tab-content-container">
+      <!-- Red Rot -->
+      <div class="tab-pane active" id="tab-redrot">
+        <div class="disease-profile-grid">
+          <div class="profile-main">
+            <div class="pathogen-badge red"><i class="fa-solid fa-skull-crossbones"></i> "The Cancer of Sugarcane"</div>
+            <h3 class="profile-name">Sugarcane Red Rot Disease</h3>
+            <p class="profile-pathogen"><strong>Pathogen:</strong> <em>Colletotrichum falcatum</em> Went (Teleomorph: <em>Glomerella tucumanensis</em>)</p>
+            
+            <h4 class="sub-heading"><i class="fa-solid fa-circle-info"></i> Disease Overview & Symptoms</h4>
+            <p>
+              Red Rot is the most catastrophic disease of sugarcane in tropical and subtropical regions. 
+              First symptoms on leaves appear as minute red lesions on the midrib that elongate and develop characteristic 
+              <strong>white centers with dark red/brown margins</strong>. 
+              As infection advances systemically, leaves wither from tip to base, canes lose weight, shrivel, and longitudinal splitting reveals reddened pith tissues with transverse white patches and an alcoholic fermentative odor.
+            </p>
+
+            <h4 class="sub-heading"><i class="fa-solid fa-arrows-split-up-and-left"></i> Transmission & Environmental Triggers</h4>
+            <ul class="styled-list">
+              <li><strong>Primary Source:</strong> Infected seed cane sets and dormant mycelium in soil or ratoon stubble.</li>
+              <li><strong>Secondary Spread:</strong> Rain splash, irrigation runoff, boring insects (e.g. stalk borers).</li>
+              <li><strong>Favorable Conditions:</strong> Waterlogged soil, high relative humidity (&gt;85%), temperature 28°C–32°C, susceptible monocultures.</li>
+            </ul>
+          </div>
+
+          <div class="profile-side">
+            <div class="card treatment-card">
+              <h4 class="side-title"><i class="fa-solid fa-shield-virus"></i> Integrated Management Protocol</h4>
+              
+              <div class="protocol-step">
+                <span class="step-num">1</span>
+                <div>
+                  <strong>Clean Seed Selection</strong>
+                  <p>Plant certified disease-free sets. Treat sets with hot water at 52°C for 30 minutes or hot moist air at 54°C for 2.5 hours.</p>
+                </div>
+              </div>
+
+              <div class="protocol-step">
+                <span class="step-num">2</span>
+                <div>
+                  <strong>Chemical Dip & Spray</strong>
+                  <p>Soak sets in Carbendazim 50% WP (1g/L) for 15 minutes before sowing. Apply foliar spray of Thiophanate-methyl if midrib lesions appear.</p>
+                </div>
+              </div>
+
+              <div class="protocol-step">
+                <span class="step-num">3</span>
+                <div>
+                  <strong>Resistant Varieties</strong>
+                  <p>Cultivate proven tolerant cultivars like Co 86032, Co 0238 (with monitoring), and avoid continuous ratoon in infected plots.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mosaic Virus -->
+      <div class="tab-pane" id="tab-mosaic">
+        <div class="disease-profile-grid">
+          <div class="profile-main">
+            <div class="pathogen-badge teal"><i class="fa-solid fa-virus"></i> Potyviridae Complex</div>
+            <h3 class="profile-name">Sugarcane Mosaic Virus (SCMV)</h3>
+            <p class="profile-pathogen"><strong>Pathogen:</strong> <em>Sugarcane mosaic virus</em> (SCMV / SrMV) / Genus: <em>Potyvirus</em></p>
+            
+            <h4 class="sub-heading"><i class="fa-solid fa-circle-info"></i> Disease Overview & Symptoms</h4>
+            <p>
+              Sugarcane Mosaic is a worldwide viral disease characterized by foliar chlorosis. Leaves exhibit distinctive 
+              <strong>mottled patterns of contrasting light green, yellowish islands against normal dark green tissue</strong>. 
+              The mosaic pattern is most evident on young expanding leaves near the spindle. Severe viral strains cause stunting, shortened internodes, and diminished juice sucrose concentration.
+            </p>
+
+            <h4 class="sub-heading"><i class="fa-solid fa-arrows-split-up-and-left"></i> Transmission Vectors</h4>
+            <ul class="styled-list">
+              <li><strong>Insect Vectors:</strong> Non-persistently vectored by aphids including <em>Rhopalosiphum maidis</em> (Corn leaf aphid) and <em>Aphis craccivora</em>.</li>
+              <li><strong>Mechanical Spread:</strong> Cutting knives, harvest harvesters, and vegetative propagation of infected seed cane.</li>
+              <li><strong>Alternative Hosts:</strong> Maize (Zea mays), sorghum, and wild grasses (Sorghum halepense).</li>
+            </ul>
+          </div>
+
+          <div class="profile-side">
+            <div class="card treatment-card">
+              <h4 class="side-title"><i class="fa-solid fa-shield-virus"></i> Integrated Management Protocol</h4>
+              
+              <div class="protocol-step">
+                <span class="step-num">1</span>
+                <div>
+                  <strong>Rogueing & Sanitation</strong>
+                  <p>Regularly walk fields during early tillering. Dig out and burn all mosaic-affected clumps immediately.</p>
+                </div>
+              </div>
+
+              <div class="protocol-step">
+                <span class="step-num">2</span>
+                <div>
+                  <strong>Vector Suppression</strong>
+                  <p>Control aphid colonies using Imidacloprid 17.8% SL @ 0.3ml/L or systemic bio-neem oil extracts.</p>
+                </div>
+              </div>
+
+              <div class="protocol-step">
+                <span class="step-num">3</span>
+                <div>
+                  <strong>Meristem Tissue Culture</strong>
+                  <p>Establish seed cane nurseries using virus-indexed apical meristem tissue cultured planting materials.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sugarcane Rust -->
+      <div class="tab-pane" id="tab-rust">
+        <div class="disease-profile-grid">
+          <div class="profile-main">
+            <div class="pathogen-badge orange"><i class="fa-solid fa-burst"></i> Foliar Fungal Epiphytotic</div>
+            <h3 class="profile-name">Sugarcane Rust (Common & Orange)</h3>
+            <p class="profile-pathogen"><strong>Pathogen:</strong> <em>Puccinia melanocephala</em> (Common Rust) & <em>Puccinia kuehnii</em> (Orange Rust)</p>
+            
+            <h4 class="sub-heading"><i class="fa-solid fa-circle-info"></i> Disease Overview & Symptoms</h4>
+            <p>
+              Sugarcane Rust affects the photosynthetic capacity of mature and young leaves. It manifests as small, elongated 
+              <strong>chlorotic flecks that rapidly expand into cinnamon-brown to orange-brown pustules (uredinia)</strong> 
+              parallel to the leaf venation. The epidermis ruptures, discharging massive amounts of powdery rust spores. 
+              Severe coalescence results in premature leaf desiccation, premature leaf drop, and poor stalk girth.
+            </p>
+
+            <h4 class="sub-heading"><i class="fa-solid fa-arrows-split-up-and-left"></i> Weather Triggers & Epidemiology</h4>
+            <ul class="styled-list">
+              <li><strong>Environmental Preference:</strong> Moderate temperatures (20°C–26°C), prolonged dew periods (&gt;8 hours), and cloudy overcast days.</li>
+              <li><strong>Dispersal:</strong> High-altitude wind currents carry urediniospores across hundreds of kilometers.</li>
+            </ul>
+          </div>
+
+          <div class="profile-side">
+            <div class="card treatment-card">
+              <h4 class="side-title"><i class="fa-solid fa-shield-virus"></i> Integrated Management Protocol</h4>
+              
+              <div class="protocol-step">
+                <span class="step-num">1</span>
+                <div>
+                  <strong>Protective Fungicide Spray</strong>
+                  <p>Apply Mancozeb 75% WP @ 2.5g/L or Pyraclostrobin + Epoxiconazole at first sign of flecking.</p>
+                </div>
+              </div>
+
+              <div class="protocol-step">
+                <span class="step-num">2</span>
+                <div>
+                  <strong>Nutritional Balance</strong>
+                  <p>Avoid excessive nitrogenous fertilization which promotes succulent susceptible tissues; boost Potassium (K) levels.</p>
+                </div>
+              </div>
+
+              <div class="protocol-step">
+                <span class="step-num">3</span>
+                <div>
+                  <strong>Canopy Aeration</strong>
+                  <p>Maintain recommended row spacing (120 cm to 150 cm) to encourage air circulation and rapid leaf surface drying.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Yellow Leaf -->
+      <div class="tab-pane" id="tab-yellow">
+        <div class="disease-profile-grid">
+          <div class="profile-main">
+            <div class="pathogen-badge yellow"><i class="fa-solid fa-sun"></i> Foliar Phloem Disorder</div>
+            <h3 class="profile-name">Sugarcane Yellow Leaf Disease (SCYLD)</h3>
+            <p class="profile-pathogen"><strong>Pathogen:</strong> <em>Sugarcane yellow leaf virus</em> (SCYLV) / Genus: <em>Polerovirus</em></p>
+            
+            <h4 class="sub-heading"><i class="fa-solid fa-circle-info"></i> Disease Overview & Symptoms</h4>
+            <p>
+              Yellow Leaf Disease causes intense midrib chlorosis. In symptomatic plants, the lower surface of the 
+              <strong>midrib on leaves 3 to 6 develops an intense golden-yellow coloration</strong> while the leaf blade remains green initially. 
+              Subsequently, yellowing spreads laterally into the lamina, followed by pinkish/purple discoloration and distal necrosis. 
+              The virus damages phloem vessels, obstructing sucrose translocation to the root system and cane stalks.
+            </p>
+
+            <h4 class="sub-heading"><i class="fa-solid fa-arrows-split-up-and-left"></i> Transmission & Latency</h4>
+            <ul class="styled-list">
+              <li><strong>Vectors:</strong> Semi-persistently transmitted by the sugarcane aphid (<em>Melanaphis sacchari</em>).</li>
+              <li><strong>Silent Infections:</strong> Can remain asymptomatic under optimal irrigation, becoming pronounced during water stress or crop maturity.</li>
+            </ul>
+          </div>
+
+          <div class="profile-side">
+            <div class="card treatment-card">
+              <h4 class="side-title"><i class="fa-solid fa-shield-virus"></i> Integrated Management Protocol</h4>
+              
+              <div class="protocol-step">
+                <span class="step-num">1</span>
+                <div>
+                  <strong>Certified Seed Cane Nursery</strong>
+                  <p>Employ serological (TBIA) or molecular (RT-PCR) tested disease-free seed sets for new plantation establishment.</p>
+                </div>
+              </div>
+
+              <div class="protocol-step">
+                <span class="step-num">2</span>
+                <div>
+                  <strong>Aphid Colony Control</strong>
+                  <p>Monitor underleaf surfaces for <em>Melanaphis sacchari</em> colonies and spray systemic insecticide Thiamethoxam 25% WG @ 0.3g/L.</p>
+                </div>
+              </div>
+
+              <div class="protocol-step">
+                <span class="step-num">3</span>
+                <div>
+                  <strong>Soil Moisture Management</strong>
+                  <p>Mitigate moisture stress through drip irrigation to prevent symptom aggravation during sucrose accumulation stages.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Healthy Benchmark -->
+      <div class="tab-pane" id="tab-healthy">
+        <div class="disease-profile-grid">
+          <div class="profile-main">
+            <div class="pathogen-badge green"><i class="fa-solid fa-circle-check"></i> Agronomic Standard</div>
+            <h3 class="profile-name">Healthy Sugarcane Foliage Benchmark</h3>
+            <p class="profile-pathogen"><strong>Crop:</strong> <em>Saccharum officinarum</em> L. / Family: <em>Poaceae</em></p>
+            
+            <h4 class="sub-heading"><i class="fa-solid fa-circle-info"></i> Physical Health Characteristics</h4>
+            <p>
+              Healthy sugarcane leaves display uniform deep emerald green pigmentation across the entire blade with 
+              <strong>clean, sturdy, white-to-light-green midribs devoid of discoloration, chlorosis, or necrotic pustules</strong>. 
+              Leaf margins are smooth and intact with erect to semi-erect phyllotaxy, ensuring optimal light interception and photosynthetic conversion.
+            </p>
+
+            <h4 class="sub-heading"><i class="fa-solid fa-arrow-trend-up"></i> Key Productivity Parameters</h4>
+            <ul class="styled-list">
+              <li><strong>Leaf Area Index (LAI):</strong> 4.5 – 6.0 during peak grand growth stage.</li>
+              <li><strong>SPAD Chlorophyll Reading:</strong> 42 – 48 SPAD units under balanced nutritional status.</li>
+              <li><strong>Canopy Interception:</strong> &gt;90% photosynthetically active radiation (PAR) absorbed.</li>
+            </ul>
+          </div>
+
+          <div class="profile-side">
+            <div class="card treatment-card">
+              <h4 class="side-title"><i class="fa-solid fa-seedling"></i> Best Maintenance Practices</h4>
+              
+              <div class="protocol-step">
+                <span class="step-num">1</span>
+                <div>
+                  <strong>Balanced N-P-K Nutrition</strong>
+                  <p>Apply recommended fertilizer doses (250:100:120 kg/ha N:P:K) split across tillering and elongation phases.</p>
+                </div>
+              </div>
+
+              <div class="protocol-step">
+                <span class="step-num">2</span>
+                <div>
+                  <strong>Detrashing Practices</strong>
+                  <p>Remove dried lower leaves (detrashing) at 5th and 7th month to minimize humidity and suppress scale insects.</p>
+                </div>
+              </div>
+
+              <div class="protocol-step">
+                <span class="step-num">3</span>
+                <div>
+                  <strong>Prophylactic Bio-Sprays</strong>
+                  <p>Spray fermented pseudomonas or mycorrhizal inoculants to reinforce foliar cuticle defense mechanisms.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interactive Treatment & Dosage Calculator -->
+  <section class="section-container" id="calculator">
+    <div class="section-header">
+      <div class="section-tag"><i class="fa-solid fa-calculator"></i> Agronomy Farm Tool</div>
+      <h2 class="section-title">Field Treatment & Yield Loss Calculator</h2>
+      <p class="section-subtitle">
+        Compute exact fungicide, biopesticide, and water volume requirements tailored to your field acreage, crop growth stage, and infection severity level.
+      </p>
+    </div>
+
+    <div class="calc-card-container">
+      <div class="card calc-card">
+        <!-- Input Form -->
+        <div class="calc-inputs-col">
+          <h3 class="calc-col-title"><i class="fa-solid fa-sliders"></i> Field Parameters</h3>
+          
+          <div class="form-group">
+            <label class="form-label" for="calcDiseaseSelect"><i class="fa-solid fa-disease"></i> Targeted Disease Condition</label>
+            <select id="calcDiseaseSelect" class="form-select">
+              <option value="RedRot" selected>Red Rot (Colletotrichum falcatum)</option>
+              <option value="Mosaic">Mosaic Virus (SCMV)</option>
+              <option value="Rust">Sugarcane Rust (Puccinia melanocephala)</option>
+              <option value="Yellow">Yellow Leaf Disease (SCYLV)</option>
+              <option value="Healthy">Preventive Maintenance (Healthy)</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-half">
+              <label class="form-label" for="calcArea"><i class="fa-solid fa-map"></i> Field Area</label>
+              <input type="number" id="calcArea" class="form-input" value="5" min="0.5" max="500" step="0.5">
+            </div>
+            <div class="form-group col-half">
+              <label class="form-label" for="calcUnit"><i class="fa-solid fa-ruler-combined"></i> Unit</label>
+              <select id="calcUnit" class="form-select">
+                <option value="acre" selected>Acres</option>
+                <option value="hectare">Hectares</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="calcGrowthStage"><i class="fa-solid fa-seedling"></i> Crop Growth Stage</label>
+            <select id="calcGrowthStage" class="form-select">
+              <option value="early">Tillering Phase (60–90 Days)</option>
+              <option value="grand" selected>Grand Growth Phase (90–210 Days)</option>
+              <option value="maturation">Ripening / Maturation Phase (210+ Days)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <div class="slider-label-row">
+              <label class="form-label" for="calcSeveritySlider"><i class="fa-solid fa-triangle-exclamation"></i> Observed Infection Severity</label>
+              <span class="slider-val" id="calcSeverityVal">25% (Moderate)</span>
+            </div>
+            <input type="range" id="calcSeveritySlider" class="form-slider" min="5" max="80" value="25" step="5">
+            <div class="slider-hints">
+              <span>5% (Flecking)</span>
+              <span>25% (Noticeable)</span>
+              <span>50% (Spreading)</span>
+              <span>80% (Severe)</span>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-block" id="recalcBtn">
+            <i class="fa-solid fa-arrows-rotate"></i> Recalculate Dosage & Losses
+          </button>
+          <button type="button" class="btn btn-secondary btn-block mt-2" id="saveDosagePlanBtn">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Save Plan to Cloud Firestore
+          </button>
+        </div>
+
+        <!-- Calculation Output Results -->
+        <div class="calc-results-col">
+          <h3 class="calc-col-title"><i class="fa-solid fa-receipt"></i> Prescribed Chemical & Economic Schedule</h3>
+          
+          <div class="calc-result-box highlight-box">
+            <div class="res-item">
+              <span class="res-label">Primary Recommended Chemical</span>
+              <span class="res-value" id="calcRecChemical">Carbendazim 50% WP</span>
+              <span class="res-sub" id="calcRecDosage">Dosage: 2.0 grams / Liter of water</span>
+            </div>
+          </div>
+
+          <div class="calc-stats-grid">
+            <div class="calc-stat-box">
+              <div class="cstat-icon"><i class="fa-solid fa-box"></i></div>
+              <div class="cstat-info">
+                <span class="cstat-label">Total Chemical Required</span>
+                <span class="cstat-val" id="calcTotalChem">4.0 kg</span>
+              </div>
+            </div>
+
+            <div class="calc-stat-box">
+              <div class="cstat-icon"><i class="fa-solid fa-droplet"></i></div>
+              <div class="cstat-info">
+                <span class="cstat-label">Spray Water Volume</span>
+                <span class="cstat-val" id="calcTotalWater">2,000 Liters</span>
+              </div>
+            </div>
+
+            <div class="calc-stat-box">
+              <div class="cstat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+              <div class="cstat-info">
+                <span class="cstat-label">Recommended Rounds</span>
+                <span class="cstat-val" id="calcRounds">2 Sprays (12d interval)</span>
+              </div>
+            </div>
+
+            <div class="calc-stat-box">
+              <div class="cstat-icon"><i class="fa-solid fa-arrow-trend-down"></i></div>
+              <div class="cstat-info">
+                <span class="cstat-label">Yield Loss If Untreated</span>
+                <span class="cstat-val text-red" id="calcLossUntreated">~28.5% Loss</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="economic-benefit-box">
+            <div class="benefit-header">
+              <i class="fa-solid fa-sack-dollar text-green"></i>
+              <strong>Estimated Crop Value Protected:</strong>
+            </div>
+            <div class="benefit-amount" id="calcValueProtected">$3,420 / ₹2,80,000</div>
+            <p class="benefit-sub">Based on average commercial sugarcane yield of 80 tons/hectare ($45/ton baseline).</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Printable Report Modal -->
+  <div class="modal-backdrop hidden" id="reportModalBackdrop">
+    <div class="modal-dialog report-modal" id="reportModal">
+      <div class="modal-header">
+        <div class="modal-brand">
+          <i class="fa-solid fa-eye text-green"></i>
+          <span>GREEN-EYE — Official Agronomic Pathology Report</span>
+        </div>
+        <button class="modal-close-btn" id="closeReportModalBtn">&times;</button>
+      </div>
+
+      <div class="modal-body" id="printableReportBody">
+        <div class="report-print-header">
+          <div class="report-header-left">
+            <h2>GREEN-EYE Diagnostic Certificate</h2>
+            <p class="report-date">Generated: <span id="reportPrintDate">2026-09-22</span> | Ref ID: <span id="reportPrintId">GE-98421</span></p>
+          </div>
+          <div class="report-header-right">
+            <span class="report-badge-certified"><i class="fa-solid fa-certificate"></i> AI Verified</span>
+          </div>
+        </div>
+
+        <div class="report-summary-box">
+          <div class="report-image-thumb">
+            <img id="reportPrintThumb" src="" alt="Analyzed Leaf Sample">
+          </div>
+          <div class="report-main-stats">
+            <div class="report-stat-row">
+              <span class="rstat-k">Diagnosed Pathology:</span>
+              <span class="rstat-v text-bold" id="reportPrintDiagnosis">Sugarcane Red Rot</span>
+            </div>
+            <div class="report-stat-row">
+              <span class="rstat-k">Scientific Pathogen:</span>
+              <span class="rstat-v" id="reportPrintPathogen">Colletotrichum falcatum</span>
+            </div>
+            <div class="report-stat-row">
+              <span class="rstat-k">Confidence Level:</span>
+              <span class="rstat-v" id="reportPrintConfidence">96.8%</span>
+            </div>
+            <div class="report-stat-row">
+              <span class="rstat-k">Estimated Severity:</span>
+              <span class="rstat-v" id="reportPrintSeverity">Moderate (Foliar Midrib)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-prescription-table-wrap">
+          <h4>Prescribed Clinical Intervention</h4>
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Prescription Specification</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Immediate Cultural Action</td>
+                <td id="reportTableImmediate">Rogue infected stalks, maintain proper surface drainage.</td>
+              </tr>
+              <tr>
+                <td>Chemical Remedy</td>
+                <td id="reportTableChemical">Carbendazim 50% WP @ 2.0g/L or Thiophanate Methyl @ 1.5g/L</td>
+              </tr>
+              <tr>
+                <td>Biological / Soil Care</td>
+                <td id="reportTableBio">Trichoderma harzianum soil inoculation</td>
+              </tr>
+              <tr>
+                <td>Field Surveillance Schedule</td>
+                <td id="reportTableSurveillance">Re-survey canopy in 14 days</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="report-footer-signatures">
+          <div class="signature-col">
+            <div class="signature-line"></div>
+            <span>GREEN-EYE Neural Vision v3.8</span>
+          </div>
+          <div class="signature-col text-right">
+            <div class="signature-line"></div>
+            <span>Field Agronomist Verification</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelModalBtn">Close</button>
+        <button class="btn btn-primary" id="triggerPrintBtn">
+          <i class="fa-solid fa-print"></i> Print / Save PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-notification hidden" id="toastNotification">
+    <i class="fa-solid fa-circle-check text-green" id="toastIcon"></i>
+    <span id="toastMsg">Logged in successfully as agronomist@gmail.com</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand-col">
+        <div class="brand-logo footer-logo">
+          <div class="logo-icon-box small">
+            <i class="fa-solid fa-eye"></i>
+          </div>
+          <span class="brand-title">GREEN<span class="accent-text">-EYE</span></span>
+        </div>
+        <p class="footer-tagline">
+          Precision foliar AI pathology platform designed for sugarcane researchers, agronomy specialists, and field plantation managers.
+        </p>
+      </div>
+
+      <div class="footer-links-col">
+        <h4 class="footer-title">Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="#hero">Overview</a></li>
+          <li><a href="#diagnostic-studio">AI Diagnostic Studio</a></li>
+          <li><a href="#dataset-explorer">Dataset Explorer (2,521)</a></li>
+          <li><a href="#pathology-hub">Pathology Encyclopedia</a></li>
+          <li><a href="#calculator">Treatment Calculator</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links-col">
+        <h4 class="footer-title">Dataset Categories</h4>
+        <ul class="footer-links">
+          <li><span class="footer-dot dot-healthy"></span> Healthy Sugarcane (522)</li>
+          <li><span class="footer-dot dot-redrot"></span> Red Rot (518)</li>
+          <li><span class="footer-dot dot-rust"></span> Sugarcane Rust (514)</li>
+          <li><span class="footer-dot dot-yellow"></span> Yellow Leaf Disease (505)</li>
+          <li><span class="footer-dot dot-mosaic"></span> Mosaic Virus (462)</li>
+        </ul>
+      </div>
+
+      <div class="footer-links-col">
+        <h4 class="footer-title">Security & Session</h4>
+        <div class="footer-badge">
+          <i class="fa-solid fa-shield-halved text-green"></i> Session Protected
+        </div>
+        <p class="footer-note" id="footerAuthStatus">Status: Authenticated Session</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 GREEN-EYE. Precision Sugarcane Leaf Disease Pathology Core.</p>
+    </div>
+  </footer>
+
+  <!-- Cloud Firestore History Modal -->
+  <div class="modal-backdrop hidden" id="cloudHistoryModalBackdrop">
+    <div class="modal-dialog" id="cloudHistoryModal">
+      <div class="modal-header">
+        <div class="modal-brand">
+          <i class="fa-solid fa-cloud-arrow-up text-cyan"></i>
+          <span>Cloud Firestore Diagnostic History (green-eye-afc2f)</span>
+        </div>
+        <button class="modal-close-btn" id="closeCloudHistoryBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="history-intro">Live diagnostic scans synchronized to Cloud Firestore database collection: <code>diagnostic_scans</code></p>
+        <div class="cloud-scans-list" id="cloudScansList">
+          <div class="loading-scans"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading records from Firestore...</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeCloudHistoryFooterBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main JavaScript Application Logic (ES Module with Firebase) -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
