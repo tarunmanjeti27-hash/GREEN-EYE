@@ -306,14 +306,16 @@ for cls_folder in CLASSES:
 async def serve_login():
     login_file = BASE_DIR / "login.html"
     if login_file.exists():
-        return FileResponse(str(login_file))
+        headers = {"Cache-Control": "no-cache, no-store, must-revalidate"}
+        return FileResponse(str(login_file), headers=headers)
     return RedirectResponse(url="/")
 
 @app.get("/login.html")
 async def serve_login_html():
     login_file = BASE_DIR / "login.html"
     if login_file.exists():
-        return FileResponse(str(login_file))
+        headers = {"Cache-Control": "no-cache, no-store, must-revalidate"}
+        return FileResponse(str(login_file), headers=headers)
     return RedirectResponse(url="/")
 
 # Serve index.html at root
@@ -321,7 +323,8 @@ async def serve_login_html():
 async def serve_index():
     index_file = BASE_DIR / "index.html"
     if index_file.exists():
-        return FileResponse(str(index_file))
+        headers = {"Cache-Control": "no-cache, no-store, must-revalidate"}
+        return FileResponse(str(index_file), headers=headers)
     return {"message": "GREEN-EYE Backend Online. index.html not found in root."}
 
 # Mount static files for CSS, JS, etc.

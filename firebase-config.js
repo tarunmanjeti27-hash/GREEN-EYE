@@ -36,14 +36,23 @@ export const firebaseConfig = {
   measurementId: "G-DE9TP5TDBE"
 };
 
-// Initialize Firebase App
-export const app = initializeApp(firebaseConfig);
+export let app = null;
+export let db = null;
+export let auth = null;
 
-// Initialize Cloud Firestore
-export const db = getFirestore(app);
+try {
+  // Initialize Firebase App
+  app = initializeApp(firebaseConfig);
 
-// Initialize Authentication
-export const auth = getAuth(app);
+  // Initialize Cloud Firestore
+  db = getFirestore(app);
+
+  // Initialize Authentication
+  auth = getAuth(app);
+} catch (error) {
+  console.error("GREEN-EYE Firebase Initialization Error:", error);
+  console.warn("Application will continue without cloud syncing.");
+}
 
 // Optional Analytics initialization with safety check
 export let analytics = null;
