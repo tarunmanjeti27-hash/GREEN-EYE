@@ -600,6 +600,10 @@ const DOM = {
   leafFileInput: document.getElementById("leafFileInput"),
   browseFileBtn: document.getElementById("browseFileBtn"),
   webcamBtn: document.getElementById("webcamBtn"),
+  webcamViewerBox: document.getElementById("webcamViewerBox"),
+  webcamVideo: document.getElementById("webcamVideo"),
+  captureWebcamBtn: document.getElementById("captureWebcamBtn"),
+  cancelWebcamBtn: document.getElementById("cancelWebcamBtn"),
   imageViewerBox: document.getElementById("imageViewerBox"),
   leafPreviewImage: document.getElementById("leafPreviewImage"),
   analysisCanvas: document.getElementById("analysisCanvas"),
@@ -1037,13 +1041,48 @@ function initEventListeners() {
     });
   });
 
-  // Webcam Mock
-  DOM.webcamBtn.addEventListener("click", () => {
-    const classes = Object.keys(DATASET_SAMPLES);
-    const randomClass = classes[Math.floor(Math.random() * classes.length)];
-    const sampleList = DATASET_SAMPLES[randomClass];
-    const randomImg = sampleList[Math.floor(Math.random() * sampleList.length)];
-    loadSampleImage(randomClass, `${randomClass}/${randomImg}`, `Camera-Snapshot-${Date.now().toString().slice(-4)}.jpeg`);
+  // Webcam Logic
+  let webcamStream = null;
+
+  DOM.webcamBtn.addEventListener("click", async () => {
+    DOM.dropZoneIdle.classList.add("hidden");
+    DOM.webcamViewerBox.classList.remove("hidden");
+    try {
+      webcamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      DOM.webcamVideo.srcObject = webcamStream;
+    } catch (err) {
+      alert("Error accessing camera: " + err.message);
+      DOM.cancelWebcamBtn.click();
+    }
+  });
+
+  DOM.cancelWebcamBtn.addEventListener("click", () => {
+    if (webcamStream) {
+      webcamStream.getTracks().forEach(track => track.stop());
+      webcamStream = null;
+    }
+    DOM.webcamViewerBox.classList.add("hidden");
+    DOM.dropZoneIdle.classList.remove("hidden");
+  });
+
+  DOM.captureWebcamBtn.addEventListener("click", () => {
+    if (!webcamStream) return;
+    const canvas = document.createElement("canvas");
+    canvas.width = DOM.webcamVideo.videoWidth || 640;
+    canvas.height = DOM.webcamVideo.videoHeight || 480;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(DOM.webcamVideo, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+    
+    // Stop stream and hide viewer
+    if (webcamStream) {
+      webcamStream.getTracks().forEach(track => track.stop());
+      webcamStream = null;
+    }
+    DOM.webcamViewerBox.classList.add("hidden");
+    
+    const timestamp = Date.now().toString().slice(-4);
+    displayAndAnalyzeImage(dataUrl, `Camera-Snapshot-${timestamp}.jpeg`, "Camera Capture", null, false);
   });
 
   // Reset Image

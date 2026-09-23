@@ -796,8 +796,10 @@
     }
 
     // Guest link
-    document.getElementById("linkGuestAccess").addEventListener("click", () => {
+    document.getElementById("linkGuestAccess").addEventListener("click", (e) => {
+      e.preventDefault();
       sessionStorage.setItem("greeneye_session_active", "guest");
+      window.location.href = "index.html";
     });
 
     // Forgot Password Mock
